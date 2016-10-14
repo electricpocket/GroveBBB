@@ -1,4 +1,6 @@
-## **GrovePi: The Raspberry Pi Meets Grove Sensors**
+## GroveBBB based on GrovePi: The Raspberry Pi Meets Grove Sensors**
+Patched up examples in GrovePi to use the ADAFRUIT GPIO https://github.com/adafruit/adafruit-beaglebone-io-python
+and smbus to use the i2c2 as default
 
 GrovePi is an open source platform for connecting Grove Sensors to the Raspberry Pi.  Create your Internet of Things devices and inventions without the need for soldering!
 ![Picture](GrovePi_Plus_By_Dexter_Industries_For_the_Raspberry_Pi.JPG)
