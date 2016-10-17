@@ -96,9 +96,9 @@ class SensorITG3200(object):
         self.x_offset = abs(x_offset_temp)/samples
         self.y_offset = abs(y_offset_temp)/samples
         self.z_offset = abs(z_offset_temp)/samples
-        if(x_offset_temp > 0)self.x_offset = -self.x_offset
-        if(y_offset_temp > 0)self.y_offset = -self.y_offset
-        if(z_offset_temp > 0)self.z_offset = -self.z_offset
+        if(x_offset_temp > 0):self.x_offset = -self.x_offset
+        if(y_offset_temp > 0):self.y_offset = -self.y_offset
+        if(z_offset_temp > 0):self.z_offset = -self.z_offset
 
 
 
