@@ -8,6 +8,7 @@
 
 from adxl345 import ADXL345
 import time
+import math
 
 adxl345 = ADXL345()
     
