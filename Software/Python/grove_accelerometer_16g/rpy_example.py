@@ -13,10 +13,10 @@ adxl345 = ADXL345()
     
 print("ADXL345 on address 0x%x:" % (adxl345.address))
 while True:
-	axes = adxl345.getAxes(True)
-    roll= 180*(math.atan2(-axes['y'],axes['z'])/math.pi)
+    axes = adxl345.getAxes(True)
+    roll= 180*(math.atan2(-axes['y'],axes['z']))/math.pi
     pitch = 180*(math.atan2(-axes['x'],(axes['y']*axes['y']+axes['z']*axes['z'])))/math.pi
     print(( axes['x'] ),"\t",( axes['y'] ),"\t",( axes['z'] ))
     print ("Pitch: ",pitch,"Roll: ", roll, "degrees")
-	time.sleep(.1)
+    time.sleep(.1)
  
