@@ -85,7 +85,7 @@ class SensorITG3200(object):
         x_offset_temp = 0
         y_offset_temp = 0
         z_offset_temp = 0
-        for num in range(0,samples)
+        for num in range(0,samples):
             time.sleep(sampleDelayMS*1000)
             gx, gy, gz = sensor.read_data()
             x_offset_temp += gx
