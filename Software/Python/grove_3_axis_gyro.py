@@ -40,6 +40,26 @@ class SensorITG3200(object):
         """
         self.bus = smbus.SMBus(bus_nr)
         self.addr = addr
+    
+    def zero_Calibrate(self, samples, sampleDelayMS):
+        gx, gy, gz = sensor.read_data()
+        x_offset_temp = 0
+        y_offset_temp = 0
+        z_offset_temp = 0
+        for num in range(0,samples):
+            time.sleep(sampleDelayMS*1000)
+            gx, gy, gz = sensor.read_data()
+            x_offset_temp += gx
+            y_offset_temp += gy
+            z_offset_temp += gz
+  
+
+        self.x_offset = abs(x_offset_temp)/samples
+        self.y_offset = abs(y_offset_temp)/samples
+        self.z_offset = abs(z_offset_temp)/samples
+        if(x_offset_temp > 0):self.x_offset = -self.x_offset
+        if(y_offset_temp > 0):self.y_offset = -self.y_offset
+        if(z_offset_temp > 0):self.z_offset = -self.z_offset
 
     def sample_rate(self, lpf, div):
         """Set internal sample rate, low pass filter frequency.
@@ -69,7 +89,7 @@ class SensorITG3200(object):
         8kHz internal sample rate, 256Hz low pass filter, sample rate divider 8.
         """
         self.sample_rate(0, 8)
-        zeroCalibrate(self,10,100)
+        self.zero_Calibrate(self,10,100)
 
     def read_data(self):
         """Read and return data tuple for x, y and z axis
@@ -79,28 +99,6 @@ class SensorITG3200(object):
 		gy = int_sw_swap(self.bus.read_word_data(self.addr, 0x1f))
 		gz = int_sw_swap(self.bus.read_word_data(self.addr, 0x21))
         return (gx, gy, gz)
-
-    def zeroCalibrate(self,samples,sampleDelayMS):
-        gx, gy, gz = sensor.read_data()
-        x_offset_temp = 0
-        y_offset_temp = 0
-        z_offset_temp = 0
-        for num in range(0,samples):
-            time.sleep(sampleDelayMS*1000)
-            gx, gy, gz = sensor.read_data()
-            x_offset_temp += gx
-            y_offset_temp += gy
-            z_offset_temp += gz
-  
-
-        self.x_offset = abs(x_offset_temp)/samples
-        self.y_offset = abs(y_offset_temp)/samples
-        self.z_offset = abs(z_offset_temp)/samples
-        if(x_offset_temp > 0):self.x_offset = -self.x_offset
-        if(y_offset_temp > 0):self.y_offset = -self.y_offset
-        if(z_offset_temp > 0):self.z_offset = -self.z_offset
-
-
 
 if __name__ == '__main__':
     import time
