@@ -69,6 +69,7 @@ class SensorITG3200(object):
         8kHz internal sample rate, 256Hz low pass filter, sample rate divider 8.
         """
         self.sample_rate(0, 8)
+        zeroCalibrate(self,10,100)
 
     def read_data(self):
         """Read and return data tuple for x, y and z axis
@@ -79,6 +80,28 @@ class SensorITG3200(object):
 		gz = int_sw_swap(self.bus.read_word_data(self.addr, 0x21))
         return (gx, gy, gz)
 
+    def zeroCalibrate(self,samples,sampleDelayMS):
+        gx, gy, gz = sensor.read_data()
+        x_offset_temp = 0
+        y_offset_temp = 0
+        z_offset_temp = 0
+        for num in range(0,samples)
+            time.sleep(sampleDelayMS*1000)
+            gx, gy, gz = sensor.read_data()
+            x_offset_temp += gx
+            y_offset_temp += gy
+            z_offset_temp += gz
+  
+
+        self.x_offset = abs(x_offset_temp)/samples
+        self.y_offset = abs(y_offset_temp)/samples
+        self.z_offset = abs(z_offset_temp)/samples
+        if(x_offset_temp > 0)self.x_offset = -self.x_offset
+        if(y_offset_temp > 0)self.y_offset = -self.y_offset
+        if(z_offset_temp > 0)self.z_offset = -self.z_offset
+
+
+
 if __name__ == '__main__':
     import time
     sensor = SensorITG3200(2, 0x68) # update with your bus number and address
@@ -86,4 +109,4 @@ if __name__ == '__main__':
 while True:
     time.sleep(0.1)
     gx, gy, gz = sensor.read_data()
-    print gx, gy, gz
+    print (gx+self.x_offset)/14.375, (gy+self.y_offset)/14.375, (gz+self.z_offset)/14.375 "deg/s"
