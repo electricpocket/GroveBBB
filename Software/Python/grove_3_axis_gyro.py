@@ -109,4 +109,4 @@ if __name__ == '__main__':
 while True:
     time.sleep(0.1)
     gx, gy, gz = sensor.read_data()
-    print (gx+self.x_offset)/14.375, (gy+self.y_offset)/14.375, (gz+self.z_offset)/14.375 "deg/s"
+    print (gx+self.x_offset)/14.375 +"," + (gy+self.y_offset)/14.375+"," + (gz+self.z_offset)/14.375 +" deg/s"
