@@ -41,7 +41,7 @@ class SensorITG3200(object):
         self.bus = smbus.SMBus(bus_nr)
         self.addr = addr
     
-    def zero_Calibrate(self, samples, sampleDelayMS):
+    def zero_Calibrate(samples, sampleDelayMS):
         gx, gy, gz = sensor.read_data()
         x_offset_temp = 0
         y_offset_temp = 0
