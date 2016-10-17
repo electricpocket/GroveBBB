@@ -83,6 +83,7 @@ if __name__ == '__main__':
     import time
     sensor = SensorITG3200(2, 0x68) # update with your bus number and address
     sensor.default_init()
+while True:
     time.sleep(0.1)
     gx, gy, gz = sensor.read_data()
     print gx, gy, gz
