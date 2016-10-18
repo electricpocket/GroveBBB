@@ -15,7 +15,8 @@ from datetime import datetime
 adxl345 = ADXL345()
     
 print("ADXL345 on address 0x%x:" % (adxl345.address))
-count=0
+heave=0;sway=0;surge=0;rollsum=0;pitchsum=0;rollmax=0;surgemax=0;heavemax=0;heavemin=99
+count=0  
 while True:
     axes = adxl345.getAxes(True)
     roll= 180*(math.atan2(-axes['y'],axes['z']))/math.pi
