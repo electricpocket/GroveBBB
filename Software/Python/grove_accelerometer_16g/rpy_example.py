@@ -31,7 +31,7 @@ while True:
     pitchmax=max(pitchmax,pitch)
     rollmax=max(rollmax,roll)
     heavemax=max(heavemax,heave)
-    heavemin=min(heavmin,heave)
+    heavemin=min(heavemin,heave)
     swaymax=max(swaymax,sway)
     surgemax=max(surgemax,surge)
     count=count+1
