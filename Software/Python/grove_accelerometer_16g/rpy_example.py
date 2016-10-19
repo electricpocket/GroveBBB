@@ -65,14 +65,14 @@ while True:
         s.connect(server_address)
         msg = 'P' + 'PMR' +'A,'+ timestamp+',' + '0'+','+ 'T'+','+ ("%.2f" %rollmax)+','+ str(pitchmax)+',' +str(heavemax)+',0,0,0,'+str(swaymax)+','+str(surgemax)+',0,0'
         chksum=checksum(msg)
-        nmea='$' + msg+'*'+ ("%X" %chksum)
+        nmea='$' + msg+'*'+ ("%X" %chksum) +"\r\n"
         print nmea 
-        s.sendall(nmea)
+        s.send(nmea)
         msg = 'P' + 'PMR' +'B,'+ timestamp+',' + '0'+','+ 'T'+','+ ("%.2f" %roll)+','+ str(pitch)+',' +str(heavesum)+',0,0,0,'+str(swaysum)+','+str(surgesum)+',0,0'
         chksum=checksum(msg)
-        nmea= '$' + msg+'*'+ ("%X" %chksum)
+        nmea= '$' + msg+'*'+ ("%X" %chksum) + "\r\n"
         print nmea 
-        s.sendall(nmea)
+        s.send(nmea)
         s.close()
         
         #zero values
