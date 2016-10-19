@@ -45,7 +45,7 @@ while True:
     swaymax=max(swaymax,sway)
     surgemax=max(surgemax,surge)
     count=count+1
-    if (count==60):
+    if ((count % 60) == 0):
         roll=rollsum/60
         pitch=pitchsum/60
         #send out NMEA messages with readings
