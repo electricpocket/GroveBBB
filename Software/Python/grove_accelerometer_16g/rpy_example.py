@@ -15,7 +15,8 @@ import operator
 
 def checksum(sentence):
     sentence = sentence.strip('\n')
-    nmeadata,cksum = sentence.split('*', 1)
+    nmeadata=sentence
+    #,cksum = sentence.split('*', 1)
     calc_cksum = reduce(operator.xor, (ord(s) for s in nmeadata), 0)
 
     #return nmeadata,int(cksum,16),calc_cksum
