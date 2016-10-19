@@ -51,7 +51,7 @@ while True:
         timestamp = "{:%H%M%S}".format(datetime.now())
         msg = 'PA' + 'SHR' +','+ timestamp+',' + '0'+','+ 'T'+','+ ("%.2f" %rollmax)+','+ str(pitchmax)+',' +str(heavemax)+',0,0,0,2,1'
         chksum=checksum(msg)
-        print msg+'*'+str(chksum)
+        print msg+'*'+ ("%X" %chksum)
         #zero values
         heave=0;sway=0;surge=0;rollsum=0;pitchsum=0;pitchmax=0;rollmax=0;surgemax=0;heavemax=0;heavemin=99;swaymax=0
         count=0  
