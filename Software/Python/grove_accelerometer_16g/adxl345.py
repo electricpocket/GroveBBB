@@ -47,6 +47,7 @@ class ADXL345:
         self.setBandwidthRate(BW_RATE_100HZ)
         self.setRange(RANGE_2G)
         self.enableMeasurement()
+        self.zero_Calibrate(10,100)
 
     def enableMeasurement(self):
         bus.write_byte_data(self.address, POWER_CTL, MEASURE)
@@ -63,6 +64,26 @@ class ADXL345:
         value |= 0x08;
 
         bus.write_byte_data(self.address, DATA_FORMAT, value)
+        
+    def zero_Calibrate(self, samples, sampleDelayMS):
+        gx, gy, gz = self.getAxes(True)
+        x_offset_temp = 0
+        y_offset_temp = 0
+        z_offset_temp = 0
+        for num in range(0,samples):
+            time.sleep(sampleDelayMS/1000)
+            gx, gy, gz = sensor.read_data()
+            x_offset_temp += gx
+            y_offset_temp += gy
+            z_offset_temp += gz
+  
+
+        self.x_offset = abs(x_offset_temp)/samples
+        self.y_offset = abs(y_offset_temp)/samples
+        self.z_offset = abs(z_offset_temp)/samples - 1
+        if(x_offset_temp > 0):self.x_offset = -self.x_offset
+        if(y_offset_temp > 0):self.y_offset = -self.y_offset
+        if(z_offset_temp > 0):self.z_offset = -self.z_offset
     
     # returns the current reading from the sensor for each axis
     #
@@ -84,9 +105,9 @@ class ADXL345:
         if(z & (1 << 16 - 1)):
             z = z - (1<<16)
 
-        x = x * SCALE_MULTIPLIER 
-        y = y * SCALE_MULTIPLIER
-        z = z * SCALE_MULTIPLIER
+        x = x * SCALE_MULTIPLIER + self.x_offset
+        y = y * SCALE_MULTIPLIER + self.y_offset
+        z = z * SCALE_MULTIPLIER + self.z_offset
 
         if gforce == False:
             x = x * EARTH_GRAVITY_MS2
