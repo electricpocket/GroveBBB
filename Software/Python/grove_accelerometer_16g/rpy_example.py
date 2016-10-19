@@ -59,6 +59,7 @@ while True:
         pitch=pitchsum/60
         #send out NMEA messages with readings
         timestamp = "{:%H%M%S}".format(datetime.now())
+        timestamp = datetime.now().strftime("%s")
         #proprietary Pocket Mariner NMEA sentence A
         #see https://docs.google.com/document/d/1P1K23f8aAzeZkK1TB_iIkhLFMHQiSzMuK3u-V7evQaM/edit?usp=sharing
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
