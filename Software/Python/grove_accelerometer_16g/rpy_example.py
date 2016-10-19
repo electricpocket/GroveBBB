@@ -35,7 +35,7 @@ while True:
     axes = adxl345.getAxes(False)
     pitch= 180*(math.atan2(-axes['y'],axes['z']))/math.pi
     roll = 180*(math.atan2(-axes['x'],(axes['y']*axes['y']+axes['z']*axes['z'])))/math.pi
-    heave=axes['z']
+    heave=axes['z'] - EARTH_GRAVITY_MS2
     sway=axes['x']
     surge=axes['y']
     print(( "Sway: ",axes['x'] )," Surge: ",( axes['y'] )," Heave: ",( axes['z'] ))
