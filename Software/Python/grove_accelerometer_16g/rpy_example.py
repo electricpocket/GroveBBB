@@ -11,6 +11,15 @@ import time
 import math
 #import pynmea2
 from datetime import datetime
+import operator
+
+def checksum(sentence):
+    sentence = sentence.strip('\n')
+    nmeadata,cksum = sentence.split('*', 1)
+    calc_cksum = reduce(operator.xor, (ord(s) for s in nmeadata), 0)
+
+    #return nmeadata,int(cksum,16),calc_cksum
+    return calc_cksum
 
 adxl345 = ADXL345()
     
@@ -19,8 +28,8 @@ heave=0;sway=0;surge=0;rollsum=0;pitchsum=0;pitchmax=0;rollmax=0;surgemax=0;heav
 count=0; 
 while True:
     axes = adxl345.getAxes(True)
-    roll= 180*(math.atan2(-axes['y'],axes['z']))/math.pi
-    pitch = 180*(math.atan2(-axes['x'],(axes['y']*axes['y']+axes['z']*axes['z'])))/math.pi
+    pitch= 180*(math.atan2(-axes['y'],axes['z']))/math.pi
+    roll = 180*(math.atan2(-axes['x'],(axes['y']*axes['y']+axes['z']*axes['z'])))/math.pi
     print(( "Sway: ",axes['x'] )," Surge: ",( axes['y'] )," Heave: ",( axes['z'] ))
     print ("Pitch: ",pitch," Roll: ", roll, "degrees")
     heave+=axes['z']
@@ -40,8 +49,9 @@ while True:
         pitch=pitchsum/60
         #send out NMEA messages with readings
         timestamp = "{:%H%M%S}".format(datetime.now())
-        msg = 'PA' + 'SHR' +','+ timestamp+',' + '0'+','+ 'T'+','+ str(rollmax)+','+ str(pitchmax)+',' +str(heavemax)+',0, 0, 0, 2, 1'
-        print msg
+        msg = 'PA' + 'SHR' +','+ timestamp+',' + '0'+','+ 'T'+','+ ("%.2f" %rollmax)+','+ str(pitchmax)+',' +str(heavemax)+',0,0,0,2,1'
+        chksum=checksum(msg)
+        print msg+'*'+str(chksum)
         #zero values
         heave=0;sway=0;surge=0;rollsum=0;pitchsum=0;pitchmax=0;rollmax=0;surgemax=0;heavemax=0;heavemin=99;swaymax=0
         count=0   
