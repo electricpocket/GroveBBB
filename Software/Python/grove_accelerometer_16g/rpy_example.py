@@ -12,6 +12,7 @@ import math
 #import pynmea2
 from datetime import datetime
 import operator
+import socket
 
 def checksum(sentence):
     sentence = sentence.strip('\n')
@@ -23,19 +24,28 @@ def checksum(sentence):
     return calc_cksum
 
 adxl345 = ADXL345()
-    
+server_address = ('crowdais.com', 5114)
+
+  
 print("ADXL345 on address 0x%x:" % (adxl345.address))
 heave=0;sway=0;surge=0;rollsum=0;pitchsum=0;pitchmax=0;rollmax=0;surgemax=0;heavemax=0;heavemin=99;swaymax=0
+heaveV=0;swayV=0;surgeV=0;surgesum=0;heavesum=0;swaysum=0
 count=0; 
 while True:
     axes = adxl345.getAxes(True)
     pitch= 180*(math.atan2(-axes['y'],axes['z']))/math.pi
     roll = 180*(math.atan2(-axes['x'],(axes['y']*axes['y']+axes['z']*axes['z'])))/math.pi
+    heave=axes['z']
+    sway=axes['x']
+    surge=axes['y']
     print(( "Sway: ",axes['x'] )," Surge: ",( axes['y'] )," Heave: ",( axes['z'] ))
     print ("Pitch: ",pitch," Roll: ", roll, "degrees")
-    heave+=axes['z']
-    sway+=axes['x']
-    surge+=axes['y']
+    heaveV+=heave
+    swayV+=sway
+    surgeV+=surge
+    heavesum+=heaveV
+    swaysum+=swayV
+    surgesum+=surgeV
     pitchsum+=pitch
     rollsum+=roll
     pitchmax=max(pitchmax,pitch)
@@ -49,11 +59,29 @@ while True:
         pitch=pitchsum/60
         #send out NMEA messages with readings
         timestamp = "{:%H%M%S}".format(datetime.now())
-        msg = 'PA' + 'SHR' +','+ timestamp+',' + '0'+','+ 'T'+','+ ("%.2f" %rollmax)+','+ str(pitchmax)+',' +str(heavemax)+',0,0,0,2,1'
+        #proprietary Pocket Mariner NMEA sentence A
+        #see https://docs.google.com/document/d/1P1K23f8aAzeZkK1TB_iIkhLFMHQiSzMuK3u-V7evQaM/edit?usp=sharing
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect(server_address)
+        msg = 'P' + 'PMR' +'A,'+ timestamp+',' + '0'+','+ 'T'+','+ ("%.2f" %rollmax)+','+ str(pitchmax)+',' +str(heavemax)+',0,0,0,'+str(swaymax)+','+str(surgemax)+',0,0'
         chksum=checksum(msg)
-        print msg+'*'+ ("%X" %chksum)
+        nmea='$' + msg+'*'+ ("%X" %chksum)
+        print nmea 
+        s.sendall(nmea)
+        msg = 'P' + 'PMR' +'B,'+ timestamp+',' + '0'+','+ 'T'+','+ ("%.2f" %roll)+','+ str(pitch)+',' +str(heavesum)+',0,0,0,'+str(swaysum)+','+str(surgesum)+',0,0'
+        chksum=checksum(msg)
+        nmea= '$' + msg+'*'+ ("%X" %chksum)
+        print nmea 
+        s.sendall(nmea)
+        s.close()
+        
         #zero values
         heave=0;sway=0;surge=0;rollsum=0;pitchsum=0;pitchmax=0;rollmax=0;surgemax=0;heavemax=0;heavemin=99;swaymax=0
+        surgesum=0;heavesum=0;swaysum=0
+        #don't zero velocities unless they are mad - just decay them for now in case of offsets.
+        heaveV=heaveV/2
+        surgeV=surgeV/2
+        swayV=swayV/2
         count=0  
         
     count=count+1 
