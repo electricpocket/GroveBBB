@@ -32,12 +32,76 @@ def checksum(sentence):
 adxl345 = ADXL345()
 server_address = ('crowdais.com', 5114)
 
+def showFFT(data,dataTitle):
+      Fs = 1.0;  # sampling rate
+      Ts = 1.0/Fs; # sampling interval
+      t = np.arange(0,60,Ts) # time vector
+      n = len(data) # length of the signal
+      k = np.arange(n)
+      T = n/Fs
+      frq = k/T # two sides frequency range
+      frq = frq[range(n/2)] # one side frequency range
+      Y = np.fft.rfft(data)/n # fft computing and normalization
+            #Y = Y[range(n/2)]
+      print Y
+      plotly.offline.plot({
+    "data": [Scatter (x=t, y=data)],
+    "layout": Layout(title=dataTitle ,
+     xaxis=dict(
+        autorange=True,
+        showgrid=False,
+        zeroline=False,
+        showline=False,
+        autotick=True,
+        ticks='outside',
+        showticklabels=True,
+        title='time (s)'
+    ),
+    yaxis=dict(
+        autorange=True,
+        showgrid=False,
+        zeroline=False,
+        showline=False,
+        autotick=True,
+        ticks='outside',
+        showticklabels=True,
+        title='amplitude (¡)'
+    ))},
+    filename=dataTitle+'time.html')
+
+      plotly.offline.plot({
+    "data": [Scatter (x=frq, y=abs(Y))],
+    "layout": Layout(title=dataTitle, 
+     xaxis=dict(
+        autorange=True,
+        showgrid=False,
+        zeroline=False,
+        showline=False,
+        autotick=True,
+        ticks='outside',
+        showticklabels=True,
+    title='frequency (Hz)'
+    ),
+    yaxis=dict(
+        autorange=True,
+        showgrid=False,
+        zeroline=False,
+        showline=False,
+        autotick=True,
+        ticks='outside',
+        showticklabels=True,
+    title='amplitude ¡'
+
+    ))},filename=dataTitle+'_freq.html')       
+        
+
   
 print("ADXL345 on address 0x%x:" % (adxl345.address))
 heave=0;sway=0;surge=0;rollsum=0;pitchsum=0;pitchmax=0;rollmax=0;surgemax=0;heavemax=0;heavemin=99;swaymax=0
 heaveV=0;swayV=0;surgeV=0;surgesum=0;heavesum=0;swaysum=0
 count=0; 
 pitch_array = []
+roll_array = []
 while True:
     axes = adxl345.getAxes(False)
     pitch= 180*(math.atan2(-axes['y'],axes['z']))/math.pi
@@ -46,6 +110,7 @@ while True:
     sway=axes['x']
     surge=axes['y']
     pitch_array.append(pitch)
+    roll_array.append(roll)
     print(( "Sway: ",sway )," Surge: ",(surge )," Heave: ",(heave ))
     print ("Pitch: ",pitch," Roll: ", roll, "degrees")
     heaveV+=heave
@@ -92,67 +157,8 @@ while True:
         #nmea= '$' + msg+'*'+ ("%X" %chksum)+"\r\n"
         #do the FFTs
         if (count == 60):
-            Fs = 1.0;  # sampling rate
-            Ts = 1.0/Fs; # sampling interval
-            t = np.arange(0,60,Ts) # time vector
-            n = len(pitch_array) # length of the signal
-            k = np.arange(n)
-            T = n/Fs
-            frq = k/T # two sides frequency range
-            frq = frq[range(n/2)] # one side frequency range
-            Y = np.fft.rfft(pitch_array)/n # fft computing and normalization
-            #Y = Y[range(n/2)]
-            print Y
-	    plotly.offline.plot({
-    "data": [Scatter (x=t, y=pitch_array)],
-    "layout": Layout(title="time domain",
-     xaxis=dict(
-        autorange=True,
-        showgrid=False,
-        zeroline=False,
-        showline=False,
-        autotick=True,
-        ticks='outside',
-        showticklabels=True,
-        title='t'
-    ),
-    yaxis=dict(
-        autorange=True,
-        showgrid=False,
-        zeroline=False,
-        showline=False,
-        autotick=True,
-        ticks='outside',
-        showticklabels=True,
-        title='amplitude'
-    ))},
-    filename='time.html')
-
-	    plotly.offline.plot({
-    "data": [Scatter (x=frq, y=abs(Y))],
-    "layout": Layout(title="frequency domain", 
-     xaxis=dict(
-        autorange=True,
-        showgrid=False,
-        zeroline=False,
-        showline=False,
-        autotick=True,
-        ticks='outside',
-        showticklabels=True,
-	title='f'
-    ),
-    yaxis=dict(
-        autorange=True,
-        showgrid=False,
-        zeroline=False,
-        showline=False,
-        autotick=True,
-        ticks='outside',
-        showticklabels=True,
-	title='amplitude'
-
-    ))},filename='freq.html')       
-        
+            showFFT(pitch_array,"Pitch angle")
+            showFFT(roll_array,"Roll angle")
         #zero values
         heave=0;sway=0;surge=0;rollsum=0;pitchsum=0;pitchmax=0;rollmax=0;surgemax=0;heavemax=0;heavemin=99;swaymax=0
         surgesum=0;heavesum=0;swaysum=0
