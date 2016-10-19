@@ -70,9 +70,9 @@ class ADXL345:
         
     def zero_Calibrate(self, samples, sampleDelayMS):
         axes = self.getAxes(True)
-        x_offset_temp = 0
-        y_offset_temp = 0
-        z_offset_temp = 0
+        x_offset_temp = axes['x']
+        y_offset_temp = axes['y']
+        z_offset_temp = axes['z']
         for num in range(0,samples):
             sleep(sampleDelayMS/1000)
             axes = self.getAxes(True)
@@ -83,7 +83,7 @@ class ADXL345:
 
         self.x_offset = abs(x_offset_temp)/samples
         self.y_offset = abs(y_offset_temp)/samples
-        self.z_offset = abs(z_offset_temp)/samples - 1
+        self.z_offset = abs(z_offset_temp)/samples
         if(x_offset_temp > 0):self.x_offset = -self.x_offset
         if(y_offset_temp > 0):self.y_offset = -self.y_offset
         if(z_offset_temp > 0):self.z_offset = -self.z_offset
