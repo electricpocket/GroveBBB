@@ -69,16 +69,16 @@ class ADXL345:
         bus.write_byte_data(self.address, DATA_FORMAT, value)
         
     def zero_Calibrate(self, samples, sampleDelayMS):
-        gx, gy, gz = self.getAxes(True)
+        axes = self.getAxes(True)
         x_offset_temp = 0
         y_offset_temp = 0
         z_offset_temp = 0
         for num in range(0,samples):
-            time.sleep(sampleDelayMS/1000)
-            gx, gy, gz = sensor.read_data()
-            x_offset_temp += gx
-            y_offset_temp += gy
-            z_offset_temp += gz
+            sleep(sampleDelayMS/1000)
+            axes = self.getAxes(True)
+            x_offset_temp +=  axes['x']
+            y_offset_temp +=  axes['y']
+            z_offset_temp += axes['z']
   
 
         self.x_offset = abs(x_offset_temp)/samples
