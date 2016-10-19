@@ -61,6 +61,9 @@ while True:
     if ((count % 60) == 0):
         roll=rollsum/60
         pitch=pitchsum/60
+        surgemax=surgemax-surgeV/60
+        heavemax=heavemax-heaveV/60
+        swaymax=swaymax-swayV/60
         #send out NMEA messages with readings
         timestamp = "{:%H%M%S}".format(datetime.now())
         timestamp = datetime.now().strftime("%s")
@@ -74,7 +77,7 @@ while True:
         #nmea='$' + msg+'*'+ ("%X" %chksum)+"\r\n"
         jsonmsg = ('{"timestamp":'+ timestamp+',"id":'+'7114'+',"rollmax":'+("%.2f" %rollmax)+',"pitchmax":'+ str(pitchmax)+',"heavemax":' +
                    str(heavemax)+',"swaymax":'+str(swaymax)+',"surgemax":'+str(surgemax)+',"rollavg":'+("%.2f" %roll)+',"pitchavg":'+ 
-                   str(pitch)+',"heave":' +str(heavesum)+',"sway":'+str(swaysum)+',"surge":'+str(surgesum)+'}')
+                   str(pitch)+',"heaveavg":' +str(heaveV/60)+',"swayavg":'+str(swayV/60)+',"surgeavg":'+str(surgev/60)+'}')
         print jsonmsg 
         s.send(jsonmsg+"\r\n")
         #msg = 'P' + 'PMR' +'B,'+ timestamp+',' + '0'+','+ 'T'+','+ ("%.2f" %roll)+','+ str(pitch)+',' +str(heavesum)+',0,0,0,'+str(swaysum)+','+str(surgesum)+',0,0'
@@ -87,9 +90,9 @@ while True:
         heave=0;sway=0;surge=0;rollsum=0;pitchsum=0;pitchmax=0;rollmax=0;surgemax=0;heavemax=0;heavemin=99;swaymax=0
         surgesum=0;heavesum=0;swaysum=0
         #don't zero velocities unless they are mad - just decay them for now in case of offsets.
-        heaveV=heaveV/2
-        surgeV=surgeV/2
-        swayV=swayV/2
+        heaveV=0
+        surgeV=0
+        swayV=0
         count=0  
         
     count=count+1 
