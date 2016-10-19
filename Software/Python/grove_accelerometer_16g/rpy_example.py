@@ -44,7 +44,6 @@ while True:
     heavemin=min(heavemin,heave)
     swaymax=max(swaymax,sway)
     surgemax=max(surgemax,surge)
-    count=count+1
     if ((count % 60) == 0):
         roll=rollsum/60
         pitch=pitchsum/60
@@ -55,7 +54,9 @@ while True:
         print msg+'*'+str(chksum)
         #zero values
         heave=0;sway=0;surge=0;rollsum=0;pitchsum=0;pitchmax=0;rollmax=0;surgemax=0;heavemax=0;heavemin=99;swaymax=0
-        count=0   
+        count=0  
+        
+    count=count+1 
     time.sleep(1)
     
  
