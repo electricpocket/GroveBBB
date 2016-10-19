@@ -36,7 +36,7 @@ count=0;
 while True:
     axes = adxl345.getAxes(False)
     pitch= 180*(math.atan2(-axes['y'],axes['z']))/math.pi
-    roll = 180*(math.atan2(-axes['x'],(axes['y']*axes['y']+axes['z']*axes['z'])))/math.pi
+    roll = 180*(math.atan2(-axes['x']/EARTH_GRAVITY_MS2,(axes['y']*axes['y']+axes['z']*axes['z'])/(EARTH_GRAVITY_MS2*EARTH_GRAVITY_MS2)))/math.pi
     heave=axes['z'] - EARTH_GRAVITY_MS2
     sway=axes['x']
     surge=axes['y']
@@ -77,7 +77,7 @@ while True:
         #nmea='$' + msg+'*'+ ("%X" %chksum)+"\r\n"
         jsonmsg = ('{"timestamp":'+ timestamp+',"id":'+'7114'+',"rollmax":'+("%.2f" %rollmax)+',"pitchmax":'+ str(pitchmax)+',"heavemax":' +
                    str(heavemax)+',"swaymax":'+str(swaymax)+',"surgemax":'+str(surgemax)+',"rollavg":'+("%.2f" %roll)+',"pitchavg":'+ 
-                   str(pitch)+',"heaveavg":' +str(heaveV/60)+',"swayavg":'+str(swayV/60)+',"surgeavg":'+str(surgev/60)+'}')
+                   str(pitch)+',"heaveavg":' +str(heaveV/60)+',"swayavg":'+str(swayV/60)+',"surgeavg":'+str(surgeV/60)+'}')
         print jsonmsg 
         s.send(jsonmsg+"\r\n")
         #msg = 'P' + 'PMR' +'B,'+ timestamp+',' + '0'+','+ 'T'+','+ ("%.2f" %roll)+','+ str(pitch)+',' +str(heavesum)+',0,0,0,'+str(swaysum)+','+str(surgesum)+',0,0'
