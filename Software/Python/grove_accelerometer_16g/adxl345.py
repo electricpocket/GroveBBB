@@ -47,6 +47,9 @@ class ADXL345:
         self.setBandwidthRate(BW_RATE_100HZ)
         self.setRange(RANGE_2G)
         self.enableMeasurement()
+        self.x_offset = 0
+        self.y_offset = 0
+        self.z_offset = 0
         self.zero_Calibrate(10,100)
 
     def enableMeasurement(self):
