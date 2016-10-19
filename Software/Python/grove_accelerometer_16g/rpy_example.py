@@ -14,6 +14,8 @@ from datetime import datetime
 import operator
 import socket
 
+EARTH_GRAVITY_MS2   = 9.80665
+
 def checksum(sentence):
     sentence = sentence.strip('\n')
     nmeadata=sentence
@@ -38,14 +40,16 @@ while True:
     heave=axes['z'] - EARTH_GRAVITY_MS2
     sway=axes['x']
     surge=axes['y']
-    print(( "Sway: ",axes['x'] )," Surge: ",( axes['y'] )," Heave: ",( axes['z'] ))
+    print(( "Sway: ",sway )," Surge: ",(surge )," Heave: ",(heave ))
     print ("Pitch: ",pitch," Roll: ", roll, "degrees")
     heaveV+=heave
     swayV+=sway
     surgeV+=surge
+    print(( "SwayV: ",swayV )," SurgeV: ",(surgeV )," HeaveV: ",(heaveV ))
     heavesum+=heaveV
     swaysum+=swayV
     surgesum+=surgeV
+    print(( "SwayS: ",swaysum )," SurgeS: ",(surgesum )," HeaveS: ",(heavesum ))
     pitchsum+=pitch
     rollsum+=roll
     pitchmax=max(pitchmax,pitch)
