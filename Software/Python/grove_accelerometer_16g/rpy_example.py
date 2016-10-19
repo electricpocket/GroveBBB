@@ -13,6 +13,8 @@ import math
 from datetime import datetime
 import operator
 import socket
+import numpy as np
+from array import *
 
 EARTH_GRAVITY_MS2   = 9.80665
 
@@ -33,6 +35,7 @@ print("ADXL345 on address 0x%x:" % (adxl345.address))
 heave=0;sway=0;surge=0;rollsum=0;pitchsum=0;pitchmax=0;rollmax=0;surgemax=0;heavemax=0;heavemin=99;swaymax=0
 heaveV=0;swayV=0;surgeV=0;surgesum=0;heavesum=0;swaysum=0
 count=0; 
+pitch_array = np.empty(shape=[0, 1])
 while True:
     axes = adxl345.getAxes(False)
     pitch= 180*(math.atan2(-axes['y'],axes['z']))/math.pi
@@ -40,6 +43,7 @@ while True:
     heave=axes['z'] - EARTH_GRAVITY_MS2
     sway=axes['x']
     surge=axes['y']
+    np.append(pitch_array,[pitch],axis=0)
     print(( "Sway: ",sway )," Surge: ",(surge )," Heave: ",(heave ))
     print ("Pitch: ",pitch," Roll: ", roll, "degrees")
     heaveV+=heave
@@ -80,11 +84,24 @@ while True:
                    str(pitch)+',"heaveavg":' +str(heaveV/60)+',"swayavg":'+str(swayV/60)+',"surgeavg":'+str(surgeV/60)+'}')
         print jsonmsg 
         s.send(jsonmsg+"\r\n")
+        s.close()
         #msg = 'P' + 'PMR' +'B,'+ timestamp+',' + '0'+','+ 'T'+','+ ("%.2f" %roll)+','+ str(pitch)+',' +str(heavesum)+',0,0,0,'+str(swaysum)+','+str(surgesum)+',0,0'
         #chksum=checksum(msg)
         #nmea= '$' + msg+'*'+ ("%X" %chksum)+"\r\n"
-
-        s.close()
+        #do the FFTs
+        if (count == 60):
+            Fs = 1.0;  # sampling rate
+            Ts = 1.0/Fs; # sampling interval
+            t = np.arange(0,60,Ts) # time vector
+            n = len(pitch_array) # length of the signal
+            k = np.arange(n)
+            T = n/Fs
+            frq = k/T # two sides frequency range
+            frq = frq[range(n/2)] # one side frequency range
+            Y = np.fft.fft(pitch_array)/n # fft computing and normalization
+            Y = Y[range(n/2)]
+            print Y
+       
         
         #zero values
         heave=0;sway=0;surge=0;rollsum=0;pitchsum=0;pitchmax=0;rollmax=0;surgemax=0;heavemax=0;heavemin=99;swaymax=0
