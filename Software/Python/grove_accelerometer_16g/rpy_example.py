@@ -15,6 +15,8 @@ import operator
 import socket
 import numpy as np
 from array import *
+import plotly
+from plotly.graph_objs import Scatter, Layout
 
 EARTH_GRAVITY_MS2   = 9.80665
 
@@ -35,7 +37,7 @@ print("ADXL345 on address 0x%x:" % (adxl345.address))
 heave=0;sway=0;surge=0;rollsum=0;pitchsum=0;pitchmax=0;rollmax=0;surgemax=0;heavemax=0;heavemin=99;swaymax=0
 heaveV=0;swayV=0;surgeV=0;surgesum=0;heavesum=0;swaysum=0
 count=0; 
-pitch_array = np.empty(shape=[0, 1])
+pitch_array = []
 while True:
     axes = adxl345.getAxes(False)
     pitch= 180*(math.atan2(-axes['y'],axes['z']))/math.pi
@@ -43,7 +45,7 @@ while True:
     heave=axes['z'] - EARTH_GRAVITY_MS2
     sway=axes['x']
     surge=axes['y']
-    np.append(pitch_array,[pitch],axis=0)
+    pitch_array.append(pitch)
     print(( "Sway: ",sway )," Surge: ",(surge )," Heave: ",(heave ))
     print ("Pitch: ",pitch," Roll: ", roll, "degrees")
     heaveV+=heave
@@ -98,10 +100,58 @@ while True:
             T = n/Fs
             frq = k/T # two sides frequency range
             frq = frq[range(n/2)] # one side frequency range
-            Y = np.fft.fft(pitch_array)/n # fft computing and normalization
-            Y = Y[range(n/2)]
+            Y = np.fft.rfft(pitch_array)/n # fft computing and normalization
+            #Y = Y[range(n/2)]
             print Y
-       
+	    plotly.offline.plot({
+    "data": [Scatter (x=t, y=pitch_array)],
+    "layout": Layout(title="time domain",
+     xaxis=dict(
+        autorange=True,
+        showgrid=False,
+        zeroline=False,
+        showline=False,
+        autotick=True,
+        ticks='outside',
+        showticklabels=True,
+        title='t'
+    ),
+    yaxis=dict(
+        autorange=True,
+        showgrid=False,
+        zeroline=False,
+        showline=False,
+        autotick=True,
+        ticks='outside',
+        showticklabels=True,
+        title='amplitude'
+    ))},
+    filename='time.html')
+
+	    plotly.offline.plot({
+    "data": [Scatter (x=frq, y=abs(Y))],
+    "layout": Layout(title="frequency domain", 
+     xaxis=dict(
+        autorange=True,
+        showgrid=False,
+        zeroline=False,
+        showline=False,
+        autotick=True,
+        ticks='outside',
+        showticklabels=True,
+	title='f'
+    ),
+    yaxis=dict(
+        autorange=True,
+        showgrid=False,
+        zeroline=False,
+        showline=False,
+        autotick=True,
+        ticks='outside',
+        showticklabels=True,
+	title='amplitude'
+
+    ))},filename='freq.html')       
         
         #zero values
         heave=0;sway=0;surge=0;rollsum=0;pitchsum=0;pitchmax=0;rollmax=0;surgemax=0;heavemax=0;heavemin=99;swaymax=0
