@@ -67,15 +67,12 @@ while True:
         chksum=checksum(msg)
 
         nmea='$' + msg+'*'+ ("%X" %chksum)+"\r\n"
-        jsonmsg = '{"timestamp":'+ timestamp+',"id":'+'7114'+',"rollmax":'+("%.2f" %rollmax)+',"pitchmax":'+ str(pitchmax)+',"heavemax":' +str(heavemax)+',"swaymax":'+str(swaymax)+',"surgemax":'+str(surgemax)+'}'
+        jsonmsg = '{"timestamp":'+ timestamp+',"id":'+'7114'+',"rollmax":'+("%.2f" %rollmax)+',"pitchmax":'+ str(pitchmax)+',"heavemax":' +str(heavemax)+',"swaymax":'+str(swaymax)+',"surgemax":'+str(surgemax)+',"rollavg":'+("%.2f" %roll)+',"pitchavg":'+ str(pitch)+',"heave":' +str(heavesum)+',"sway":'+str(swaysum)+',"surge":'+str(surgesum)+'}'
         print jsonmsg 
-        s.send(jsonmsg)
+        s.send(jsonmsg+"\r\n")
         msg = 'P' + 'PMR' +'B,'+ timestamp+',' + '0'+','+ 'T'+','+ ("%.2f" %roll)+','+ str(pitch)+',' +str(heavesum)+',0,0,0,'+str(swaysum)+','+str(surgesum)+',0,0'
         chksum=checksum(msg)
         nmea= '$' + msg+'*'+ ("%X" %chksum)+"\r\n"
-        jsonmsg = '{"timestamp":'+ timestamp+',"id":'+'7114'+',"rollmax":'+("%.2f" %roll)+',"pitchmax":'+ str(pitch)+',"heavemax":' +str(heavesum)+',"swaymax":'+str(swaysum)+',"surgemax":'+str(surgesum)+'}'
-        print jsonmsg 
-        s.send(jsonmsg)
 
         s.close()
         
