@@ -66,13 +66,15 @@ while True:
         msg = 'P' + 'PMR' +'A,'+ timestamp+',' + '0'+','+ 'T'+','+ ("%.2f" %rollmax)+','+ str(pitchmax)+',' +str(heavemax)+',0,0,0,'+str(swaymax)+','+str(surgemax)+',0,0'
         chksum=checksum(msg)
         nmea='$' + msg+'*'+ ("%X" %chksum)
-        print nmea 
-        s.sendall(nmea)
+        jsonmsg = '{"timestamp":'+ timestamp+',"id":'+'7114'+',"rollmax":'+("%.2f" %rollmax)+',"pitchmax":'+ str(pitchmax)+',"heavemax":' +str(heavemax)+',"swaymax":'+str(swaymax)+',"surgemax":'+str(surgemax)+'}'
+        print jsonmsg 
+        s.sendall(jsonmsg)
         msg = 'P' + 'PMR' +'B,'+ timestamp+',' + '0'+','+ 'T'+','+ ("%.2f" %roll)+','+ str(pitch)+',' +str(heavesum)+',0,0,0,'+str(swaysum)+','+str(surgesum)+',0,0'
         chksum=checksum(msg)
         nmea= '$' + msg+'*'+ ("%X" %chksum)
-        print nmea 
-        s.sendall(nmea)
+        jsonmsg = '{"timestamp":'+ timestamp+',"id":'+'7114'+',"rollmax":'+("%.2f" %roll)+',"pitchmax":'+ str(pitch)+',"heavemax":' +str(heavesum)+',"swaymax":'+str(swaysum)+',"surgemax":'+str(surgesum)+'}'
+        print jsonmsg 
+        s.sendall(jsonmsg)
         s.close()
         
         #zero values
