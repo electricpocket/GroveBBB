@@ -185,15 +185,15 @@ while True:
             print(pitchMaxA,pitchMaxF)
             pitchFFTList={'pitchFFT':pitchFFT}
             pitchJson= json.dumps(pitchFFTList, cls=JsonCustomEncoder)
-            #,"pitchMaxA":'+pitchMaxA+',"pitchMaxF":'+pitchMaxF+'
-            jsonmsg = ('{"timestamp":'+ timestamp+',"id":'+'7114'+',"pitchFFT":'+pitchJson +'}' )
+            #,"pma":'+pitchMaxA+',"pmf":'+pitchMaxF+'
+            jsonmsg = ('{"timestamp":'+ timestamp+',"id":'+'7114'+',"pma":'+pitchMaxA+',"pmf":'+pitchMaxF+',"pfft":'+pitchJson +'}' )
             s.send(jsonmsg+"\r\n")
             #print pitchJson
             rollFFT,rollMaxA,rollMaxF=showFFT(roll_array,"Roll")
-            pitchFFTList={'rollFFT':rollFFT}
+            rollFFTList={'rollFFT':rollFFT}
             rollJson= json.dumps(rollFFTList, cls=JsonCustomEncoder)
-            #jsonmsg = ('{"timestamp":'+ timestamp+',"id":7114,"rollMaxA":'+rollMaxA+',"rollMaxF":'+rollMaxF+',"rollFFT":'+rollJson +'}' )
-            #s.send(jsonmsg+"\r\n")
+            jsonmsg = ('{"timestamp":'+ timestamp+',"id":7114,"rma":'+rollMaxA+',"rmf":'+rollMaxF+',"rfft":'+rollJson +'}' )
+            s.send(jsonmsg+"\r\n")
             
             
         s.close()
