@@ -118,7 +118,7 @@ def showFFT(data,dataTitle,plotit=False):
 print("ADXL345 on address 0x%x:" % (adxl345.address))
 heave=0;sway=0;surge=0;rollsum=0;pitchsum=0;pitchmax=0;pitchmin=-90;rollmax=0;pitchmin=0;rollmin=0;surgemax=0;heavemax=0;heavemin=0;swaymax=0
 heaveV=0;swayV=0;surgeV=0;surgesum=0;heavesum=0;swaysum=0
-count=0; 
+count=1; 
 pitch_array = []
 roll_array = []
 while True:
@@ -207,7 +207,7 @@ while True:
         heaveV=0
         surgeV=0
         swayV=0
-        count=-1  
+        count=0  
         
     count=count+1 
     time.sleep(1)
