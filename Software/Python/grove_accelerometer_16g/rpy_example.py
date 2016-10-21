@@ -162,7 +162,10 @@ while True:
         #proprietary Pocket Mariner NMEA sentence A
         #see https://docs.google.com/document/d/1P1K23f8aAzeZkK1TB_iIkhLFMHQiSzMuK3u-V7evQaM/edit?usp=sharing
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect(server_address)
+        try: #dont exit if the receiving server is not running yet
+            s.connect(server_address)
+        except socket.error:
+            pass
         #msg = 'P' + 'PMR' +'A,'+ timestamp+',' + '0'+','+ 'T'+','+ ("%.2f" %rollmax)+','+ str(pitchmax)+',' +str(heavemax)+',0,0,0,'+str(swaymax)+','+str(surgemax)+',0,0'
         #chksum=checksum(msg)
 
