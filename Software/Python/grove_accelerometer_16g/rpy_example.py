@@ -162,9 +162,12 @@ while True:
         #proprietary Pocket Mariner NMEA sentence A
         #see https://docs.google.com/document/d/1P1K23f8aAzeZkK1TB_iIkhLFMHQiSzMuK3u-V7evQaM/edit?usp=sharing
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        connected==False
         try: #dont exit if the receiving server is not running yet
             s.connect(server_address)
+            connected=True
         except socket.error:
+            connected=False
             pass
         #msg = 'P' + 'PMR' +'A,'+ timestamp+',' + '0'+','+ 'T'+','+ ("%.2f" %rollmax)+','+ str(pitchmax)+',' +str(heavemax)+',0,0,0,'+str(swaymax)+','+str(surgemax)+',0,0'
         #chksum=checksum(msg)
@@ -176,7 +179,8 @@ while True:
                    str(heavemax)+',"swaymax":'+str(swaymax)+',"surgemax":'+str(surgemax)+',"rollavg":'+("%.2f" %roll)+',"pitchavg":'+ 
                    str(pitch)+',"heaveavg":' +str(heaveV/60)+',"swayavg":'+str(swayV/60)+',"surgeavg":'+str(surgeV/60)+'}')
         #print jsonmsg 
-        s.send(jsonmsg+"\r\n")
+        if(connected) :
+            s.send(jsonmsg+"\r\n")
         
         #msg = 'P' + 'PMR' +'B,'+ timestamp+',' + '0'+','+ 'T'+','+ ("%.2f" %roll)+','+ str(pitch)+',' +str(heavesum)+',0,0,0,'+str(swaysum)+','+str(surgesum)+',0,0'
         #chksum=checksum(msg)
@@ -190,20 +194,23 @@ while True:
             pitchJson= json.dumps(pitchFFTList, cls=JsonCustomEncoder)
             #,"pma":'+pitchMaxA+',"pmf":'+pitchMaxF+'
             jsonmsg = ('{"timestamp":'+ timestamp+',"id":'+'7114'+',"pma":'+ str(pitchMaxA) +',"pmf":'+ str(pitchMaxF) +',"pfft":'+pitchJson +'}' )
-            s.send(jsonmsg+"\r\n")
+            if(connected) :
+                s.send(jsonmsg+"\r\n")
             #print pitchJson
             rollFFT,rollMaxA,rollMaxF=showFFT(roll_array,"Roll")
             #print(rollMaxA,rollMaxF)
             rollFFTList={'rollFFT':rollFFT}
             rollJson= json.dumps(rollFFTList, cls=JsonCustomEncoder)
             jsonmsg = ('{"timestamp":'+ timestamp+',"id":7114,"rma":'+ str(rollMaxA) +',"rmf":' + str(rollMaxF) +',"rfft":'+rollJson +'}' )
-            s.send(jsonmsg+"\r\n")
+            if(connected) :
+                s.send(jsonmsg+"\r\n")
             #clear out the arrays
             pitch_array = []
             roll_array = []
             
             
-        s.close()
+        if(connected) :
+            s.close()
         #zero values
         heave=0;sway=0;surge=0;rollsum=0;pitchsum=0;pitchmax=0;rollmax=0;pitchmin=0;rollmin=0;surgemax=0;heavemax=0;heavemin=0;swaymax=0
         surgesum=0;heavesum=0;swaysum=0
