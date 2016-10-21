@@ -181,7 +181,7 @@ while True:
         #do the FFTs
         if (count == 60):
             #get Max amplitude and frequency for pitch and roll in last minute and report it
-            pitchFFT,pitchMaxA,pitchMaxF=showFFT(pitch_array,"Pitch")
+            pitchFFT,pitchMaxA,pitchMaxF=showFFT(pitch_array,"Pitch",True)
             print(pitchMaxA,pitchMaxF)
             pitchFFTList={'pitchFFT':pitchFFT}
             pitchJson= json.dumps(pitchFFTList, cls=JsonCustomEncoder)
