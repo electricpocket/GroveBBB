@@ -21,6 +21,7 @@ import json
 
 EARTH_GRAVITY_MS2   = 9.80665
 
+#http://stackoverflow.com/questions/27909658/json-encoder-and-decoder-for-complex-numpy-arrays
 class JsonCustomEncoder(json.JSONEncoder):
     """ <cropped for brevity> """
     def default(self, obj):
@@ -58,8 +59,9 @@ def showFFT(data,dataTitle,plotit=False):
       Y = np.fft.rfft(data)/n # fft computing and normalization
             #Y = Y[range(n/2)]
       print Y
+      #get max A and f
       if (plotit == False):
-            return Y
+            return (Y,np.abs(Y).max(),np.abs(Y).argmax() ) # maximum absolute value,maxF)  
       plotly.offline.plot({
     "data": [Scatter (x=t, y=data)],
     "layout": Layout(title=dataTitle ,
@@ -109,7 +111,7 @@ def showFFT(data,dataTitle,plotit=False):
     title='amplitude (degrees)'
 
     ))},filename=dataTitle+'_freq.html')  
-      return Y     
+      return (Y,np.abs(Y).max(),np.abs(Y).argmax() ) # maximum absolute value,maxF)     
         
 
   
@@ -172,20 +174,27 @@ while True:
                    str(pitch)+',"heaveavg":' +str(heaveV/60)+',"swayavg":'+str(swayV/60)+',"surgeavg":'+str(surgeV/60)+'}')
         print jsonmsg 
         s.send(jsonmsg+"\r\n")
-        s.close()
+        
         #msg = 'P' + 'PMR' +'B,'+ timestamp+',' + '0'+','+ 'T'+','+ ("%.2f" %roll)+','+ str(pitch)+',' +str(heavesum)+',0,0,0,'+str(swaysum)+','+str(surgesum)+',0,0'
         #chksum=checksum(msg)
         #nmea= '$' + msg+'*'+ ("%X" %chksum)+"\r\n"
         #do the FFTs
         if (count == 60):
-            pitchFFT=showFFT(pitch_array,"Pitch")
+            #get Max amplitude and frequency for pitch and roll in last minute and report it
+            pitchFFT,pitchMaxA,pitchMaxF=showFFT(pitch_array,"Pitch")
             pitchFFTList={'pitchFFT':pitchFFT}
             pitchJson= json.dumps(pitchFFTList, cls=JsonCustomEncoder)
-            print pitchJson
-            #rollFFT=showFFT(roll_array,"Roll")
-            jsonmsg = ('{"timestamp":'+ timestamp+',"id":'+'7114'+',"pitchfft":'+pitchJson )
+            jsonmsg = ('{"timestamp":'+ timestamp+',"id":'+'7114'+',pitchMaxA:'+pitchMaxA+',pitchMaxF:'+pitchMaxF+',pitchFFT:'+pitchJson +'}' )
+            s.send(jsonmsg+"\r\n")
+            #print pitchJson
+            rollFFT,rollMaxA,rollMaxF=showFFT(roll_array,"Roll")
+            pitchFFTList={'rollFFT':rollFFT}
+            rollJson= json.dumps(rollFFTList, cls=JsonCustomEncoder)
+            jsonmsg = ('{"timestamp":'+ timestamp+',"id":'+'7114'+',rollMaxA:'+pitchMaxA+',rollMaxF:'+pitchMaxF+',"rollFFT:'+rollJson +'}' )
+            s.send(jsonmsg+"\r\n")
             
-        
+            
+        s.close()
         #zero values
         heave=0;sway=0;surge=0;rollsum=0;pitchsum=0;pitchmax=0;rollmax=0;pitchmin=0;rollmin=0;surgemax=0;heavemax=0;heavemin=0;swaymax=0
         surgesum=0;heavesum=0;swaysum=0
