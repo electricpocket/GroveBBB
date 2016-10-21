@@ -185,14 +185,15 @@ while True:
             print(pitchMaxA,pitchMaxF)
             pitchFFTList={'pitchFFT':pitchFFT}
             pitchJson= json.dumps(pitchFFTList, cls=JsonCustomEncoder)
-            jsonmsg = ('{"timestamp":'+ timestamp+',"id":'+'7114,"pitchMaxA":'+pitchMaxA+',"pitchMaxF":'+pitchMaxF+',"pitchFFT":'+pitchJson +'}' )
+            #,"pitchMaxA":'+pitchMaxA+',"pitchMaxF":'+pitchMaxF+'
+            jsonmsg = ('{"timestamp":'+ timestamp+',"id":'+'7114'+',"pitchFFT":'+pitchJson +'}' )
             s.send(jsonmsg+"\r\n")
             #print pitchJson
             rollFFT,rollMaxA,rollMaxF=showFFT(roll_array,"Roll")
             pitchFFTList={'rollFFT':rollFFT}
             rollJson= json.dumps(rollFFTList, cls=JsonCustomEncoder)
-            jsonmsg = ('{"timestamp":'+ timestamp+',"id":'+'7114,"rollMaxA":'+rollMaxA+',"rollMaxF":'+rollMaxF+',"rollFFT":'+rollJson +'}' )
-            s.send(jsonmsg+"\r\n")
+            #jsonmsg = ('{"timestamp":'+ timestamp+',"id":7114,"rollMaxA":'+rollMaxA+',"rollMaxF":'+rollMaxF+',"rollFFT":'+rollJson +'}' )
+            #s.send(jsonmsg+"\r\n")
             
             
         s.close()
