@@ -17,6 +17,7 @@ import numpy as np
 from array import *
 import plotly
 from plotly.graph_objs import Scatter, Layout
+import json
 
 EARTH_GRAVITY_MS2   = 9.80665
 
@@ -32,7 +33,7 @@ def checksum(sentence):
 adxl345 = ADXL345()
 server_address = ('crowdais.com', 5114)
 
-def showFFT(data,dataTitle):
+def showFFT(data,dataTitle,plotit=false):
       Fs = 1.0;  # sampling rate
       Ts = 1.0/Fs; # sampling interval
       t = np.arange(0,60,Ts) # time vector
@@ -44,6 +45,8 @@ def showFFT(data,dataTitle):
       Y = np.fft.rfft(data)/n # fft computing and normalization
             #Y = Y[range(n/2)]
       print Y
+      if (plotit == false):
+            return Y
       plotly.offline.plot({
     "data": [Scatter (x=t, y=data)],
     "layout": Layout(title=dataTitle ,
@@ -92,12 +95,13 @@ def showFFT(data,dataTitle):
         showticklabels=True,
     title='amplitude (degrees)'
 
-    ))},filename=dataTitle+'_freq.html')       
+    ))},filename=dataTitle+'_freq.html')  
+      return Y     
         
 
   
 print("ADXL345 on address 0x%x:" % (adxl345.address))
-heave=0;sway=0;surge=0;rollsum=0;pitchsum=0;pitchmax=0;rollmax=0;surgemax=0;heavemax=0;heavemin=99;swaymax=0
+heave=0;sway=0;surge=0;rollsum=0;pitchsum=0;pitchmax=0;pitchmin=-90;rollmax=0;pitchmin=0;rollmin=0;surgemax=0;heavemax=0;heavemin=0;swaymax=0
 heaveV=0;swayV=0;surgeV=0;surgesum=0;heavesum=0;swaysum=0
 count=0; 
 pitch_array = []
@@ -125,6 +129,8 @@ while True:
     rollsum+=roll
     pitchmax=max(pitchmax,pitch)
     rollmax=max(rollmax,roll)
+    pitchmin=min(pitchmin,pitch)
+    rollmin=min(rollmin,roll)
     heavemax=max(heavemax,heave)
     heavemin=min(heavemin,heave)
     swaymax=max(swaymax,sway)
@@ -146,7 +152,9 @@ while True:
         #chksum=checksum(msg)
 
         #nmea='$' + msg+'*'+ ("%X" %chksum)+"\r\n"
-        jsonmsg = ('{"timestamp":'+ timestamp+',"id":'+'7114'+',"rollmax":'+("%.2f" %rollmax)+',"pitchmax":'+ str(pitchmax)+',"heavemax":' +
+        jsonmsg = ('{"timestamp":'+ timestamp+',"id":'+'7114'+',"rollmax":'+("%.2f" %rollmax)+',"pitchmax":'+ str(pitchmax)
+                   +',"rollmin":'+("%.2f" %rollmin)+',"pitchmin":'+ str(pitchmin)
+                   +',"heavemax":' +
                    str(heavemax)+',"swaymax":'+str(swaymax)+',"surgemax":'+str(surgemax)+',"rollavg":'+("%.2f" %roll)+',"pitchavg":'+ 
                    str(pitch)+',"heaveavg":' +str(heaveV/60)+',"swayavg":'+str(swayV/60)+',"surgeavg":'+str(surgeV/60)+'}')
         print jsonmsg 
@@ -157,10 +165,14 @@ while True:
         #nmea= '$' + msg+'*'+ ("%X" %chksum)+"\r\n"
         #do the FFTs
         if (count == 60):
-            showFFT(pitch_array,"Pitch")
-            showFFT(roll_array,"Roll")
+            pitchFFT=showFFT(pitch_array,"Pitch")
+            pitchJson= json.dumps(pitchFFT.tolist())
+            #rollFFT=showFFT(roll_array,"Roll")
+            jsonmsg = ('{"timestamp":'+ timestamp+',"id":'+'7114'+',"pitchfft":'+pitchJson )
+            
+        
         #zero values
-        heave=0;sway=0;surge=0;rollsum=0;pitchsum=0;pitchmax=0;rollmax=0;surgemax=0;heavemax=0;heavemin=99;swaymax=0
+        heave=0;sway=0;surge=0;rollsum=0;pitchsum=0;pitchmax=0;rollmax=0;pitchmin=0;rollmin=0;surgemax=0;heavemax=0;heavemin=0;swaymax=0
         surgesum=0;heavesum=0;swaysum=0
         #don't zero velocities unless they are mad - just decay them for now in case of offsets.
         heaveV=0
