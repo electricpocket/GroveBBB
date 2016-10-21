@@ -130,16 +130,16 @@ while True:
     surge=axes['y']
     pitch_array.append(pitch)
     roll_array.append(roll)
-    print(( "Sway: ",sway )," Surge: ",(surge )," Heave: ",(heave ))
+    #print(( "Sway: ",sway )," Surge: ",(surge )," Heave: ",(heave ))
     print ("Pitch: ",pitch," Roll: ", roll, "degrees")
     heaveV+=heave
     swayV+=sway
     surgeV+=surge
-    print(( "SwayV: ",swayV )," SurgeV: ",(surgeV )," HeaveV: ",(heaveV ))
+    #print(( "SwayV: ",swayV )," SurgeV: ",(surgeV )," HeaveV: ",(heaveV ))
     heavesum+=heaveV
     swaysum+=swayV
     surgesum+=surgeV
-    print(( "SwayS: ",swaysum )," SurgeS: ",(surgesum )," HeaveS: ",(heavesum ))
+    #print(( "SwayS: ",swaysum )," SurgeS: ",(surgesum )," HeaveS: ",(heavesum ))
     pitchsum+=pitch
     rollsum+=roll
     pitchmax=max(pitchmax,pitch)
@@ -172,7 +172,7 @@ while True:
                    +',"heavemax":' +
                    str(heavemax)+',"swaymax":'+str(swaymax)+',"surgemax":'+str(surgemax)+',"rollavg":'+("%.2f" %roll)+',"pitchavg":'+ 
                    str(pitch)+',"heaveavg":' +str(heaveV/60)+',"swayavg":'+str(swayV/60)+',"surgeavg":'+str(surgeV/60)+'}')
-        print jsonmsg 
+        #print jsonmsg 
         s.send(jsonmsg+"\r\n")
         
         #msg = 'P' + 'PMR' +'B,'+ timestamp+',' + '0'+','+ 'T'+','+ ("%.2f" %roll)+','+ str(pitch)+',' +str(heavesum)+',0,0,0,'+str(swaysum)+','+str(surgesum)+',0,0'
@@ -182,7 +182,6 @@ while True:
         if (count == 60):
             #get Max amplitude and frequency for pitch and roll in last minute and report it
             pitchFFT,pitchMaxA,pitchMaxF=showFFT(pitch_array,"Pitch")
-            pitchMaxF=pitchMaxF*0.5/30 #Hz
             print(pitchMaxA,pitchMaxF)
             pitchFFTList={'pitchFFT':pitchFFT}
             pitchJson= json.dumps(pitchFFTList, cls=JsonCustomEncoder)
@@ -191,7 +190,7 @@ while True:
             s.send(jsonmsg+"\r\n")
             #print pitchJson
             rollFFT,rollMaxA,rollMaxF=showFFT(roll_array,"Roll")
-            rollMaxF=rollMaxF*0.5/30 #Hz
+            print(rollMaxA,rollMaxF)
             rollFFTList={'rollFFT':rollFFT}
             rollJson= json.dumps(rollFFTList, cls=JsonCustomEncoder)
             jsonmsg = ('{"timestamp":'+ timestamp+',"id":7114,"rma":'+ str(rollMaxA) +',"rmf":' + str(rollMaxF) +',"rfft":'+rollJson +'}' )
