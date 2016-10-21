@@ -58,7 +58,7 @@ def showFFT(data,dataTitle,plotit=False):
       frq = frq[range(n/2)] # one side frequency range
       Y = np.fft.rfft(data)/n # fft computing and normalization
             #Y = Y[range(n/2)]
-      print Y
+      #print Y
       #get max A and f
       if (plotit == False):
             return (Y,np.abs(Y).max(),np.abs(Y).argmax() ) # maximum absolute value,maxF)  
@@ -131,7 +131,7 @@ while True:
     pitch_array.append(pitch)
     roll_array.append(roll)
     #print(( "Sway: ",sway )," Surge: ",(surge )," Heave: ",(heave ))
-    print ("Pitch: ",pitch," Roll: ", roll, "degrees")
+    #print ("Pitch: ",pitch," Roll: ", roll, "degrees")
     heaveV+=heave
     swayV+=sway
     surgeV+=surge
