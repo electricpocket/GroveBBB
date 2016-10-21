@@ -65,9 +65,9 @@ def showFFT(data,dataTitle):
         autotick=True,
         ticks='outside',
         showticklabels=True,
-        title='amplitude (¡)'
+        title='amplitude (degrees)'
     ))},
-    filename=dataTitle+'time.html')
+    filename=dataTitle+'_time.html')
 
       plotly.offline.plot({
     "data": [Scatter (x=frq, y=abs(Y))],
@@ -90,7 +90,7 @@ def showFFT(data,dataTitle):
         autotick=True,
         ticks='outside',
         showticklabels=True,
-    title='amplitude ¡'
+    title='amplitude (degrees)'
 
     ))},filename=dataTitle+'_freq.html')       
         
@@ -157,8 +157,8 @@ while True:
         #nmea= '$' + msg+'*'+ ("%X" %chksum)+"\r\n"
         #do the FFTs
         if (count == 60):
-            showFFT(pitch_array,"Pitch angle")
-            showFFT(roll_array,"Roll angle")
+            showFFT(pitch_array,"Pitch")
+            showFFT(roll_array,"Roll")
         #zero values
         heave=0;sway=0;surge=0;rollsum=0;pitchsum=0;pitchmax=0;rollmax=0;surgemax=0;heavemax=0;heavemin=99;swaymax=0
         surgesum=0;heavesum=0;swaysum=0
