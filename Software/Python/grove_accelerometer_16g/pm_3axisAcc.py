@@ -7,6 +7,7 @@
 # http://www.seeedstudio.com/depot/Grove-3Axis-Digital-Accelerometer16g-p-1156.html
 # Provide average over a minute and maximum for all 6 parameters
 from adxl345 import ADXL345
+import sys #for args
 import time
 import math
 #import pynmea2
@@ -21,6 +22,7 @@ from array import *
 import json
 
 EARTH_GRAVITY_MS2   = 9.80665
+portnumber = sys.argv[1]
 
 #http://stackoverflow.com/questions/27909658/json-encoder-and-decoder-for-complex-numpy-arrays
 class JsonCustomEncoder(json.JSONEncoder):
@@ -46,6 +48,7 @@ def checksum(sentence):
     return calc_cksum
 
 adxl345 = ADXL345()
+portnumber = sys.argv[1]
 server_address = ('crowdais.com', 5114)
 
 def showFFT(data,dataTitle,plotit=False):
@@ -175,7 +178,7 @@ while True:
         #chksum=checksum(msg)
 
         #nmea='$' + msg+'*'+ ("%X" %chksum)+"\r\n"
-        jsonmsg = ('{"timestamp":'+ timestamp+',"id":'+'7114'+',"rollmax":'+("%.2f" %rollmax)+',"pitchmax":'+ str(pitchmax)
+        jsonmsg = ('{"timestamp":'+ timestamp+',"id":'+str(portnumber)+',"rollmax":'+("%.2f" %rollmax)+',"pitchmax":'+ str(pitchmax)
                    +',"rollmin":'+("%.2f" %rollmin)+',"pitchmin":'+ str(pitchmin)
                    +',"heavemax":' +
                    str(heavemax)+',"swaymax":'+str(swaymax)+',"surgemax":'+str(surgemax)+',"rollavg":'+("%.2f" %roll)+',"pitchavg":'+ 
@@ -195,7 +198,7 @@ while True:
             pitchFFTList={'pitchFFT':pitchFFT}
             pitchJson= json.dumps(pitchFFTList, cls=JsonCustomEncoder)
             #,"pma":'+pitchMaxA+',"pmf":'+pitchMaxF+'
-            jsonmsg = ('{"timestamp":'+ timestamp+',"id":'+'7114'+',"pma":'+ str(pitchMaxA) +',"pmf":'+ str(pitchMaxF) +',"pfft":'+pitchJson +'}' )
+            jsonmsg = ('{"timestamp":'+ timestamp+',"id":'+str(portnumber)+',"pma":'+ str(pitchMaxA) +',"pmf":'+ str(pitchMaxF) +',"pfft":'+pitchJson +'}' )
             if(connected) :
                 s.send(jsonmsg+"\r\n")
             #print pitchJson
@@ -203,7 +206,7 @@ while True:
             #print(rollMaxA,rollMaxF)
             rollFFTList={'rollFFT':rollFFT}
             rollJson= json.dumps(rollFFTList, cls=JsonCustomEncoder)
-            jsonmsg = ('{"timestamp":'+ timestamp+',"id":7114,"rma":'+ str(rollMaxA) +',"rmf":' + str(rollMaxF) +',"rfft":'+rollJson +'}' )
+            jsonmsg = ('{"timestamp":'+ timestamp+',"id":'+str(portnumber)+',"rma":'+ str(rollMaxA) +',"rmf":' + str(rollMaxF) +',"rfft":'+rollJson +'}' )
             if(connected) :
                 s.send(jsonmsg+"\r\n")
             #clear out the arrays
