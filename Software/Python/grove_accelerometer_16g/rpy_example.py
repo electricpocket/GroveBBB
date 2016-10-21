@@ -121,6 +121,7 @@ heaveV=0;swayV=0;surgeV=0;surgesum=0;heavesum=0;swaysum=0
 count=1; 
 pitch_array = []
 roll_array = []
+connected=False
 while True:
     axes = adxl345.getAxes(False)
     pitch= 180*(math.atan2(-axes['y'],axes['z']))/math.pi
@@ -162,7 +163,7 @@ while True:
         #proprietary Pocket Mariner NMEA sentence A
         #see https://docs.google.com/document/d/1P1K23f8aAzeZkK1TB_iIkhLFMHQiSzMuK3u-V7evQaM/edit?usp=sharing
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        connected==False
+        connected=False
         try: #dont exit if the receiving server is not running yet
             s.connect(server_address)
             connected=True
