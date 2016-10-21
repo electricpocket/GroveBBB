@@ -33,7 +33,7 @@ def checksum(sentence):
 adxl345 = ADXL345()
 server_address = ('crowdais.com', 5114)
 
-def showFFT(data,dataTitle,plotit=false):
+def showFFT(data,dataTitle,plotit=False):
       Fs = 1.0;  # sampling rate
       Ts = 1.0/Fs; # sampling interval
       t = np.arange(0,60,Ts) # time vector
@@ -45,7 +45,7 @@ def showFFT(data,dataTitle,plotit=false):
       Y = np.fft.rfft(data)/n # fft computing and normalization
             #Y = Y[range(n/2)]
       print Y
-      if (plotit == false):
+      if (plotit == False):
             return Y
       plotly.offline.plot({
     "data": [Scatter (x=t, y=data)],
