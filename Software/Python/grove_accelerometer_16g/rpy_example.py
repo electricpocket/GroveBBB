@@ -21,6 +21,19 @@ import json
 
 EARTH_GRAVITY_MS2   = 9.80665
 
+class JsonCustomEncoder(json.JSONEncoder):
+    """ <cropped for brevity> """
+    def default(self, obj):
+        if isinstance(obj, (np.ndarray, np.number)):
+            return obj.tolist()
+        elif isinstance(obj, (complex, np.complex)):
+            return [obj.real, obj.imag]
+        elif isinstance(obj, set):
+            return list(obj)
+        elif isinstance(obj, bytes):  # pragma: py3
+            return obj.decode()
+        return json.JSONEncoder.default(self, obj)
+
 def checksum(sentence):
     sentence = sentence.strip('\n')
     nmeadata=sentence
@@ -166,7 +179,9 @@ while True:
         #do the FFTs
         if (count == 60):
             pitchFFT=showFFT(pitch_array,"Pitch")
-            pitchJson= json.dumps(pitchFFT.tolist())
+            pitchFFTList={'pitchFFT':pitchFFT}
+            pitchJson= json.dumps(pitchFFTList, cls=JsonCustomEncoder)
+            print pitchJson
             #rollFFT=showFFT(roll_array,"Roll")
             jsonmsg = ('{"timestamp":'+ timestamp+',"id":'+'7114'+',"pitchfft":'+pitchJson )
             
