@@ -184,7 +184,7 @@ class SensorITG3200(object):
         8kHz internal sample rate, 256Hz low pass filter, sample rate divider 8.
         """
         self.sample_rate(0, 8)
-        self.zero_Calibrate(10,100)
+        self.zero_Calibrate(300,10)
 
     def read_data(self):
         """Read and return data tuple for x, y and z axis
