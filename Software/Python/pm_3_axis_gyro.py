@@ -255,7 +255,7 @@ while True:
         rollFFTList={'rollFFT':rollFFT}
         rollJson= json.dumps(rollFFTList, cls=JsonCustomEncoder)
             
-        jsonmsg = ('["gyro_roll_fft":{"timestamp":'+ timestamp+',"id":'+str(portnumber)+',"pma":'+ str(rollMaxA) +',"pmf":'+ str(rollMaxF) +',"pfft":'+rollJson +'}]' )
+        jsonmsg = ('["gyro_roll_fft":{"timestamp":'+ timestamp+',"id":'+str(portnumber)+',"rma":'+ str(rollMaxA) +',"rmf":'+ str(rollMaxF) +',"rfft":'+rollJson +'}]' )
         if(connected) :
             s.send(jsonmsg+"\r\n")
         
@@ -263,7 +263,7 @@ while True:
         turnFFTList={'turnFFT':turnFFT}
         turnJson= json.dumps(turnFFTList, cls=JsonCustomEncoder)
             
-        jsonmsg = ('["gyro_turn_fft":{"timestamp":'+ timestamp+',"id":'+str(portnumber)+',"pma":'+ str(turnMaxA) +',"pmf":'+ str(turnMaxF) +',"pfft":'+turnJson +'}]' )
+        jsonmsg = ('["gyro_turn_fft":{"timestamp":'+ timestamp+',"id":'+str(portnumber)+',"tma":'+ str(turnMaxA) +',"tmf":'+ str(turnMaxF) +',"tfft":'+turnJson +'}]' )
         if(connected) :
             s.send(jsonmsg+"\r\n")
         gxsum=0;gysum=0;gzsum=0;gxavg=0;gyavg=0;gzavg=0;gxmax=0;gxmin=0;gymax=0;gymin=0;gzmax=0;gzmin=0;
