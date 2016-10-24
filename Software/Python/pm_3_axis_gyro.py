@@ -112,9 +112,9 @@ count=1;
 connected=False
 while True:
     gx, gy, gz = sensor.read_data()
-    gx =gx+sensor.x_offset/14.375
-    gy = gy+sensor.y_offset/14.375
-    gz= gz+sensor.z_offset/14.375
+    gx =(gx+sensor.x_offset)/14.375
+    gy = (gy+sensor.y_offset)/14.375
+    gz= (gz+sensor.z_offset)/14.375
     print ("%.2f" %(gx)), ("%.2f" %(gy)), ("%.2f" %(gz)) , "deg/s"
     gxmax = max(gxmax,gx)
     gymax = max(gymax,gy)
