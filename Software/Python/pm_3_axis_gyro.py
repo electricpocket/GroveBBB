@@ -270,7 +270,7 @@ while True:
         if(connected) :
             s.send(jsonmsg+"\r\n")
             s.close()
-            connected=false
+            connected=False
         pitch_array = []
         roll_array = []
         turn_array = []
