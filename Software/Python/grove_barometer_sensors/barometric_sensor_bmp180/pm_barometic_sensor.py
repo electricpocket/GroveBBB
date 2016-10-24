@@ -7,6 +7,7 @@ from grove_i2c_barometic_sensor_BMP180 import BMP085
 from datetime import datetime
 import socket
 import json
+import time
 
 # ===========================================================================
 # Example Code
