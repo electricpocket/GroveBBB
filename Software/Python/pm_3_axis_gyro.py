@@ -23,6 +23,80 @@ import smbus
 import sys #for args
 import socket
 import time
+from datetime import datetime
+
+import operator
+import math
+import numpy as np
+from array import *
+
+def showFFT(data,dataTitle,plotit=False):
+      Fs = 1.0;  # sampling rate
+      Ts = 1.0/Fs; # sampling interval
+      t = np.arange(0,60,Ts) # time vector
+      n = len(data) # length of the signal
+      k = np.arange(n)
+      T = n/Fs
+      frq = k/T # two sides frequency range
+      frq = frq[range(n/2)] # one side frequency range
+      Y = np.fft.rfft(data)/n # fft computing and normalization
+            #Y = Y[range(n/2)]
+      #print Y
+      #get max A and f
+      if (plotit == False):
+            return (Y,np.abs(Y).max(),np.abs(Y).argmax() ) # maximum absolute value,maxF)  
+      plotly.offline.plot({
+    "data": [Scatter (x=t, y=data)],
+    "layout": Layout(title=dataTitle ,
+     xaxis=dict(
+        autorange=True,
+        showgrid=False,
+        zeroline=False,
+        showline=False,
+        autotick=True,
+        ticks='outside',
+        showticklabels=True,
+        title='time (s)'
+    ),
+    yaxis=dict(
+        autorange=True,
+        showgrid=False,
+        zeroline=False,
+        showline=False,
+        autotick=True,
+        ticks='outside',
+        showticklabels=True,
+        title='amplitude (degrees)'
+    ))},
+    filename=dataTitle+'_time.html')
+
+      plotly.offline.plot({
+    "data": [Scatter (x=frq, y=abs(Y))],
+    "layout": Layout(title=dataTitle, 
+     xaxis=dict(
+        autorange=True,
+        showgrid=False,
+        zeroline=False,
+        showline=False,
+        autotick=True,
+        ticks='outside',
+        showticklabels=True,
+    title='frequency (Hz)'
+    ),
+    yaxis=dict(
+        autorange=True,
+        showgrid=False,
+        zeroline=False,
+        showline=False,
+        autotick=True,
+        ticks='outside',
+        showticklabels=True,
+    title='amplitude (degrees)'
+
+    ))},filename=dataTitle+'_freq.html')  
+      return (Y,np.abs(Y).max(),np.abs(Y).argmax() ) # maximum absolute value,maxF)     
+        
+
 
 def int_sw_swap(x):
     """Interpret integer as signed word with bytes swapped"""
@@ -112,11 +186,17 @@ if __name__ == '__main__':
 gxsum=0;gysum=0;gzsum=0;gxavg=0;gyavg=0;gzavg=0;gxmax=0;gxmin=0;gymax=0;gymin=0;gzmax=0;gzmin=0;
 count=1; 
 connected=False
+pitch_array = []
+roll_array = []
+turn_array = []
 while True:
     gx, gy, gz = sensor.read_data()
     gx =(gx+sensor.x_offset)/14.375
     gy = (gy+sensor.y_offset)/14.375
     gz= (gz+sensor.z_offset)/14.375
+    pitch_array.append(gx)
+    roll_array.append(gy)
+    turn_array.append(gz)
     print ("%.2f" %(gx)), ("%.2f" %(gy)), ("%.2f" %(gz)) , "deg/s"
     gxmax = max(gxmax,gx)
     gymax = max(gymax,gy)
@@ -146,11 +226,36 @@ while True:
                    +',"gxavg":'+("%.2f" %gxavg)+',"gyavg":'+ ("%.2f" %gyavg)+',"gzavg":'+ ("%.2f" %gzavg)
                    +'}]')
         #print jsonmsg 
+        pitchFFT,pitchMaxA,pitchMaxF=showFFT(pitch_array,"Pitch")
+        pitchFFTList={'pitchFFT':pitchFFT}
+        pitchJson= json.dumps(pitchFFTList, cls=JsonCustomEncoder)
+            
+        jsonmsg = ('["gyro_pitch_fft":{"timestamp":'+ timestamp+',"id":'+str(portnumber)+',"pma":'+ str(pitchMaxA) +',"pmf":'+ str(pitchMaxF) +',"pfft":'+pitchJson +'}]' )
+        if(connected) :
+            s.send(jsonmsg+"\r\n")
+        rollFFT,rollMaxA,rollMaxF=showFFT(roll_array,"Roll")
+        rollFFTList={'rollFFT':rollFFT}
+        rollJson= json.dumps(rollFFTList, cls=JsonCustomEncoder)
+            
+        jsonmsg = ('["gyro_roll_fft":{"timestamp":'+ timestamp+',"id":'+str(portnumber)+',"pma":'+ str(rollMaxA) +',"pmf":'+ str(rollMaxF) +',"pfft":'+rollJson +'}]' )
+        if(connected) :
+            s.send(jsonmsg+"\r\n")
+        
+        turnFFT,turnMaxA,turnMaxF=showFFT(turn_array,"Turn")
+        turnFFTList={'turnFFT':turnFFT}
+        turnJson= json.dumps(turnFFTList, cls=JsonCustomEncoder)
+            
+        jsonmsg = ('["gyro_turn_fft":{"timestamp":'+ timestamp+',"id":'+str(portnumber)+',"pma":'+ str(turnMaxA) +',"pmf":'+ str(turnMaxF) +',"pfft":'+turnJson +'}]' )
+        if(connected) :
+            s.send(jsonmsg+"\r\n")
         gxsum=0;gysum=0;gzsum=0;gxavg=0;gyavg=0;gzavg=0;gxmax=0;gxmin=0;gymax=0;gymin=0;gzmax=0;gzmin=0;
         if(connected) :
             s.send(jsonmsg+"\r\n")
             s.close()
             connected=false
+        pitch_array = []
+        roll_array = []
+        turn_array = []
         count=0
     count=count+1
     time.sleep(1)
