@@ -108,6 +108,21 @@ def int_sw_swap(x):
 	xx = (xl << 8) + xh
     return xx - 0xffff if xx > 0x7fff else xx
 
+#http://stackoverflow.com/questions/27909658/json-encoder-and-decoder-for-complex-numpy-arrays
+class JsonCustomEncoder(json.JSONEncoder):
+    """ <cropped for brevity> """
+    def default(self, obj):
+        if isinstance(obj, (np.ndarray, np.number)):
+            return obj.tolist()
+        elif isinstance(obj, (complex, np.complex)):
+            return [obj.real, obj.imag]
+        elif isinstance(obj, set):
+            return list(obj)
+        elif isinstance(obj, bytes):  # pragma: py3
+            return obj.decode()
+        return json.JSONEncoder.default(self, obj)
+
+
 class SensorITG3200(object):
     """ITG3200 digital gyroscope control class.
     Supports data polling at the moment.
