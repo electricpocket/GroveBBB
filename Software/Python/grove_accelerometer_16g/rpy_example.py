@@ -194,7 +194,7 @@ while True:
             pitchFFTList={'pitchFFT':pitchFFT}
             pitchJson= json.dumps(pitchFFTList, cls=JsonCustomEncoder)
             #,"pma":'+pitchMaxA+',"pmf":'+pitchMaxF+'
-            jsonmsg = ('{"timestamp":'+ timestamp+',"id":'+'7114'+',"pma":'+ str(pitchMaxA) +',"pmf":'+ str(pitchMaxF) +',"pfft":'+pitchJson +'}' )
+            jsonmsg = ('{"barometric":{"timestamp":'+ timestamp+',"id":'+'7114'+',"pma":'+ str(pitchMaxA) +',"pmf":'+ str(pitchMaxF) +',"pfft":'+pitchJson +'}' )
             if(connected) :
                 s.send(jsonmsg+"\r\n")
             #print pitchJson
