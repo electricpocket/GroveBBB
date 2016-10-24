@@ -226,7 +226,7 @@ while True:
                    +',"gxavg":'+("%.2f" %gxavg)+',"gyavg":'+ ("%.2f" %gyavg)+',"gzavg":'+ ("%.2f" %gzavg)
                    +'}]')
         #print jsonmsg 
-        pitchFFT,pitchMaxA,pitchMaxF=showFFT(pitch_array,"Pitch")
+        pitchFFT,pitchMaxA,pitchMaxF=showFFT(pitch_array,"Pitch",True)
         pitchFFTList={'pitchFFT':pitchFFT}
         pitchJson= json.dumps(pitchFFTList, cls=JsonCustomEncoder)
             
