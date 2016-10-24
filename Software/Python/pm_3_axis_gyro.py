@@ -243,7 +243,8 @@ while True:
                    +',"gxmin":'+("%.2f" %gxmin)+',"gymin":'+ ("%.2f" %gymin)+',"gzmin":'+ ("%.2f" %gzmin)
                    +',"gxavg":'+("%.2f" %gxavg)+',"gyavg":'+ ("%.2f" %gyavg)+',"gzavg":'+ ("%.2f" %gzavg)
                    +'}]')
-        #print jsonmsg 
+        if(connected) :
+            s.send(jsonmsg+"\r\n") 
         pitchFFT,pitchMaxA,pitchMaxF=showFFT(pitch_array,"Pitch",True)
         pitchFFTList={'pitchFFT':pitchFFT}
         pitchJson= json.dumps(pitchFFTList, cls=JsonCustomEncoder)
@@ -268,7 +269,6 @@ while True:
             s.send(jsonmsg+"\r\n")
         gxsum=0;gysum=0;gzsum=0;gxavg=0;gyavg=0;gzavg=0;gxmax=0;gxmin=0;gymax=0;gymin=0;gzmax=0;gzmin=0;
         if(connected) :
-            s.send(jsonmsg+"\r\n")
             s.close()
             connected=False
         pitch_array = []
