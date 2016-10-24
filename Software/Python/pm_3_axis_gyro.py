@@ -22,6 +22,7 @@
 import smbus
 import sys #for args
 import socket
+import time
 
 def int_sw_swap(x):
     """Interpret integer as signed word with bytes swapped"""
@@ -130,7 +131,7 @@ while True:
         gxavg=gxsum/count
         gyavg=gysum/count
         gzavg=gzsum/count
-        
+        timestamp = datetime.now().strftime("%s")
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         connected=False
         try: #dont exit if the receiving server is not running yet
