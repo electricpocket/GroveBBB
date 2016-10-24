@@ -29,6 +29,9 @@ import operator
 import math
 import numpy as np
 from array import *
+import plotly
+from plotly.graph_objs import Scatter, Layout
+import json
 
 def showFFT(data,dataTitle,plotit=False):
       Fs = 1.0;  # sampling rate
