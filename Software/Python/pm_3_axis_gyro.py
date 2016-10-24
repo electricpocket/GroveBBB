@@ -21,6 +21,7 @@
 
 import smbus
 import sys #for args
+import socket
 
 def int_sw_swap(x):
     """Interpret integer as signed word with bytes swapped"""
