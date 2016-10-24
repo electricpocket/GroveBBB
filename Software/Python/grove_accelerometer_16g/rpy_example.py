@@ -194,7 +194,7 @@ while True:
             pitchFFTList={'pitchFFT':pitchFFT}
             pitchJson= json.dumps(pitchFFTList, cls=JsonCustomEncoder)
             #,"pma":'+pitchMaxA+',"pmf":'+pitchMaxF+'
-            jsonmsg = ('{"barometric":{"timestamp":'+ timestamp+',"id":'+'7114'+',"pma":'+ str(pitchMaxA) +',"pmf":'+ str(pitchMaxF) +',"pfft":'+pitchJson +'}' )
+            jsonmsg = ('["accelerometer":{"timestamp":'+ timestamp+',"id":'+'7114'+',"pma":'+ str(pitchMaxA) +',"pmf":'+ str(pitchMaxF) +',"pfft":'+pitchJson +'}]' )
             if(connected) :
                 s.send(jsonmsg+"\r\n")
             #print pitchJson
@@ -202,7 +202,7 @@ while True:
             #print(rollMaxA,rollMaxF)
             rollFFTList={'rollFFT':rollFFT}
             rollJson= json.dumps(rollFFTList, cls=JsonCustomEncoder)
-            jsonmsg = ('{"timestamp":'+ timestamp+',"id":7114,"rma":'+ str(rollMaxA) +',"rmf":' + str(rollMaxF) +',"rfft":'+rollJson +'}' )
+            jsonmsg = ('["accelerometer":{"timestamp":'+ timestamp+',"id":7114,"rma":'+ str(rollMaxA) +',"rmf":' + str(rollMaxF) +',"rfft":'+rollJson +'}]' )
             if(connected) :
                 s.send(jsonmsg+"\r\n")
             #clear out the arrays
