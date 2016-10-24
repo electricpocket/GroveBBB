@@ -55,10 +55,14 @@ while True:
     except socket.error:
             connected=False
             pass
+    #send out  messages with readings
+    timestamp = "{:%H%M%S}".format(datetime.now())
+    timestamp = datetime.now().strftime("%s")
     jsonmsg = ('{"timestamp":'+ timestamp+',"id":'+'7114'+',"temp":'+("%.1f" %temp)+',"pressure":'+ ("%.2f" %( pressure / 100.0))
                    +',"altitude":'+("%.2f" %altitude)+'}')
     #print jsonmsg 
     if(connected) :
             s.send(jsonmsg+"\r\n")
             s.close()
+            connected=False
     time.sleep(60)
