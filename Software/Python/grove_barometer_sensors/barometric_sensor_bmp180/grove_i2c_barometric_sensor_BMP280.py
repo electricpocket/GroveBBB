@@ -149,7 +149,7 @@ class BMP280(object) :
         """Gets the compensated pressure in Pascals."""
         #for pressure calculation we need a temperature, checking if we have one, and reading data if not
         if self._tfine == 0:
-            self.read_temperature()
+            self.readTemperature()
             
         adc_P = self.read_raw_pressure()
         var1 = self._tfine - 128000
@@ -172,7 +172,7 @@ class BMP280(object) :
 
     def readAltitude(self, sealevel_pa=101325.0):
         """Calculates the altitude in meters."""
-        pressure = float(self.read_pressure())
+        pressure = float(self.readPressure())
         altitude = 44330.0 * (1.0 - pow(pressure / sealevel_pa, (1.0/5.255)))
         if (self.debug): print('Altitude {0} m'.format(altitude))
         return altitude
@@ -180,7 +180,7 @@ class BMP280(object) :
     def readSealevelPressure(self, altitude_m=0.0):
         """Calculates the pressure at sealevel when given a known altitude in
         meters. Returns a value in Pascals."""
-        pressure = float(self.read_pressure())
+        pressure = float(self.readPressure())
         p0 = pressure / pow(1.0 - altitude_m/44330.0, 5.255)
         if (self.debug): print('Sealevel pressure {0} Pa'.format(p0))
         return p0
