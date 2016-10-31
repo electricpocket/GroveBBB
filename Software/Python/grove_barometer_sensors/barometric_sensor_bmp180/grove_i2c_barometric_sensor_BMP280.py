@@ -66,7 +66,7 @@ BMP280_READCMD = 0x3F
 
 
 
-class BMP280(object):
+class BMP280 :
     def __init__(self, address=BMP280_I2CADDR, mode=BMP280_STANDARD, i2c=None, **kwargs):
         self._logger = logging.getLogger('BMP280')
         # Check that mode is valid.
