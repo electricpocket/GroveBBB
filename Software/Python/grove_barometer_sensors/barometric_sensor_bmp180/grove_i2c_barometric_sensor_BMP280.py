@@ -25,7 +25,7 @@
 # THE SOFTWARE.
 import logging
 import time
-
+from Adafruit_I2C import Adafruit_I2C
 
 # BMP280 default address.
 BMP280_I2CADDR           = 0x77
@@ -77,10 +77,8 @@ class BMP280(object) :
         else:
             self._mode = mode
         # Create I2C device.
-        if i2c is None:
-            import Adafruit_I2C as I2C
-            i2c = I2C
-        self._device = i2c(address)
+       
+        self._device = Adafruit_I2C(address)
         # Load calibration values.
         self._load_calibration()
         self._tfine = 0
