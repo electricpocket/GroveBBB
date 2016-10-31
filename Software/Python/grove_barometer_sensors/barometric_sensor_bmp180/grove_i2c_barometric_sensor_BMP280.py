@@ -66,7 +66,7 @@ BMP280_READCMD = 0x3F
 
 
 
-class BMP280 :
+class BMP280(object) :
     def __init__(self, address=BMP280_I2CADDR, mode=BMP280_STANDARD, debug=False, i2c=None):
         self.debug = debug
         self.address = address
