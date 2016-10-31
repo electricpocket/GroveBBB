@@ -1,5 +1,6 @@
 # Copyright (c) 2016
 # Author: Vitally Tezhe
+#https://github.com/vitally/BMP280/blob/master/BMP280/BMP280.py
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
