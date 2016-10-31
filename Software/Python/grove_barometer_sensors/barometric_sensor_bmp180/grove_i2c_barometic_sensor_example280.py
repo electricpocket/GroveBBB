@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import smbus
-import Adafruit_BBIO.GPIO as GPIO
+
 #import grovepi
 from grove_i2c_barometic_sensor_BMP280 import BMP280
 
@@ -9,21 +9,16 @@ from grove_i2c_barometic_sensor_BMP280 import BMP280
 # Example Code
 # ===========================================================================
 
-# Initialise the BMP085 and use STANDARD mode (default value)
-# bmp = BMP085(0x77, debug=True)
-bmp = BMP280(0x77, 1)
+# Initialise the BMP280 and use STANDARD mode (default value)
+# bmp = BMP280(0x77, debug=True)
+bmp = BMP280(0x77, 0)
 
 # To specify a different operating mode, uncomment one of the following:
-# bmp = BMP085(0x77, 0)  # ULTRALOWPOWER Mode
-# bmp = BMP085(0x77, 1)  # STANDARD Mode
-# bmp = BMP085(0x77, 2)  # HIRES Mode
-# bmp = BMP085(0x77, 3)  # ULTRAHIRES Mode
+# bmp = BMP280(0x77, 0)  # ULTRALOWPOWER Mode
+# bmp = BMP280(0x77, 1)  # STANDARD Mode
+# bmp = BMP280(0x77, 2)  # HIRES Mode
+# bmp = BMP280(0x77, 3)  # ULTRAHIRES Mode
 
-#rev = GPIO.RPI_REVISION
-#if rev == 2 or rev == 3:
-#    bus = smbus.SMBus(1)
-#else:
-#    bus = smbus.SMBus(0)
 bus = smbus.SMBus(2)
 temp = bmp.readTemperature()
 
