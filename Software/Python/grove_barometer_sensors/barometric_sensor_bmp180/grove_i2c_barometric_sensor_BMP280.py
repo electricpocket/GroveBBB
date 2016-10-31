@@ -67,62 +67,39 @@ BMP280_READCMD = 0x3F
 
 
 class BMP280 :
-    def __init__(self, address=BMP280_I2CADDR, mode=BMP280_STANDARD, i2c=None, **kwargs):
-        self._logger = logging.getLogger('BMP280')
+    def __init__(self, address=BMP280_I2CADDR, mode=BMP280_STANDARD, debug=False, i2c=None):
+        self.debug = debug
+        self.address = address
         # Check that mode is valid.
         if mode not in [BMP280_ULTRALOWPOWER, BMP280_STANDARD, BMP280_HIGHRES, BMP280_ULTRAHIGHRES]:
-            raise ValueError('Unexpected mode value {0}.  Set mode to one of BMP280_ULTRALOWPOWER, BMP280_STANDARD, BMP280_HIGHRES, or BMP280_ULTRAHIGHRES'.format(mode))
-        self._mode = mode
+            print ('Unexpected mode value {0}.  Set mode to one of BMP280_ULTRALOWPOWER, BMP280_STANDARD, BMP280_HIGHRES, or BMP280_ULTRAHIGHRES'.format(mode))
+            self.mode = BMP280_STANDARD
+        else:
+            self._mode = mode
         # Create I2C device.
         if i2c is None:
-            import Adafruit_GPIO.I2C as I2C
+            import Adafruit_I2C as I2C
             i2c = I2C
-        self._device = i2c.get_i2c_device(address, **kwargs)
+        self._device = i2c(address)
         # Load calibration values.
         self._load_calibration()
         self._tfine = 0
     #reading two bytes of data from each address as signed or unsigned, based on the Bosch docs
     def _load_calibration(self):
-        self.cal_REGISTER_DIG_T1 = self._device.readU16LE(BMP280_REGISTER_DIG_T1)   # UINT16
-        self.cal_REGISTER_DIG_T2 = self._device.readS16LE(BMP280_REGISTER_DIG_T2)   # INT16
-        self.cal_REGISTER_DIG_T3 = self._device.readS16LE(BMP280_REGISTER_DIG_T3)   # INT16
-        self.cal_REGISTER_DIG_P1 = self._device.readU16LE(BMP280_REGISTER_DIG_P1)   # UINT16
-        self.cal_REGISTER_DIG_P2 = self._device.readS16LE(BMP280_REGISTER_DIG_P2)   # INT16
-        self.cal_REGISTER_DIG_P3 = self._device.readS16LE(BMP280_REGISTER_DIG_P3)   # INT16
-        self.cal_REGISTER_DIG_P4 = self._device.readS16LE(BMP280_REGISTER_DIG_P4)   # INT16
-        self.cal_REGISTER_DIG_P5 = self._device.readS16LE(BMP280_REGISTER_DIG_P5)   # INT16
-        self.cal_REGISTER_DIG_P6 = self._device.readS16LE(BMP280_REGISTER_DIG_P6)   # INT16
-        self.cal_REGISTER_DIG_P7 = self._device.readS16LE(BMP280_REGISTER_DIG_P7)   # INT16
-        self.cal_REGISTER_DIG_P8 = self._device.readS16LE(BMP280_REGISTER_DIG_P8)   # INT16
-        self.cal_REGISTER_DIG_P9 = self._device.readS16LE(BMP280_REGISTER_DIG_P9)   # INT16
+        self.cal_REGISTER_DIG_T1 = self._device.readU16(BMP280_REGISTER_DIG_T1)   # UINT16
+        self.cal_REGISTER_DIG_T2 = self._device.readS16(BMP280_REGISTER_DIG_T2)   # INT16
+        self.cal_REGISTER_DIG_T3 = self._device.readS16(BMP280_REGISTER_DIG_T3)   # INT16
+        self.cal_REGISTER_DIG_P1 = self._device.readU16(BMP280_REGISTER_DIG_P1)   # UINT16
+        self.cal_REGISTER_DIG_P2 = self._device.readS16(BMP280_REGISTER_DIG_P2)   # INT16
+        self.cal_REGISTER_DIG_P3 = self._device.readS16(BMP280_REGISTER_DIG_P3)   # INT16
+        self.cal_REGISTER_DIG_P4 = self._device.readS16(BMP280_REGISTER_DIG_P4)   # INT16
+        self.cal_REGISTER_DIG_P5 = self._device.readS16(BMP280_REGISTER_DIG_P5)   # INT16
+        self.cal_REGISTER_DIG_P6 = self._device.readS16(BMP280_REGISTER_DIG_P6)   # INT16
+        self.cal_REGISTER_DIG_P7 = self._device.readS16(BMP280_REGISTER_DIG_P7)   # INT16
+        self.cal_REGISTER_DIG_P8 = self._device.readS16(BMP280_REGISTER_DIG_P8)   # INT16
+        self.cal_REGISTER_DIG_P9 = self._device.readS16(BMP280_REGISTER_DIG_P9)   # INT16
 
-        self._logger.debug('T1 = {0:6d}'.format(self.cal_REGISTER_DIG_T1))
-        self._logger.debug('T2 = {0:6d}'.format(self.cal_REGISTER_DIG_T2))
-        self._logger.debug('T3 = {0:6d}'.format(self.cal_REGISTER_DIG_T3))
-        self._logger.debug('P1 = {0:6d}'.format(self.cal_REGISTER_DIG_P1))
-        self._logger.debug('P2 = {0:6d}'.format(self.cal_REGISTER_DIG_P2))
-        self._logger.debug('P3 = {0:6d}'.format(self.cal_REGISTER_DIG_P3))
-        self._logger.debug('P4 = {0:6d}'.format(self.cal_REGISTER_DIG_P4))
-        self._logger.debug('P5 = {0:6d}'.format(self.cal_REGISTER_DIG_P5))
-        self._logger.debug('P6 = {0:6d}'.format(self.cal_REGISTER_DIG_P6))
-        self._logger.debug('P7 = {0:6d}'.format(self.cal_REGISTER_DIG_P7))
-        self._logger.debug('P8 = {0:6d}'.format(self.cal_REGISTER_DIG_P8))
-        self._logger.debug('P9 = {0:6d}'.format(self.cal_REGISTER_DIG_P9))
-    #data from the datasheet example, useful for debug
-    def _load_datasheet_calibration(self):
-        self.cal_REGISTER_DIG_T1 = 27504
-        self.cal_REGISTER_DIG_T2 = 26435
-        self.cal_REGISTER_DIG_T3 = -1000
-        self.cal_REGISTER_DIG_P1 = 36477
-        self.cal_REGISTER_DIG_P2 = -10685
-        self.cal_REGISTER_DIG_P3 = 3024
-        self.cal_REGISTER_DIG_P4 = 2855
-        self.cal_REGISTER_DIG_P5 = 140
-        self.cal_REGISTER_DIG_P6 = -7
-        self.cal_REGISTER_DIG_P7 = 15500
-        self.cal_REGISTER_DIG_P8 = -14600
-        self.cal_REGISTER_DIG_P9 = 6000 
-    #reading raw data from registers, and combining into one raw measurment
+    
     def read_raw_temp(self):
             """Reads the raw (uncompensated) temperature from the sensor."""
             self._device.write8(BMP280_REGISTER_CONTROL, BMP280_READCMD + (self._mode << 6))
@@ -138,7 +115,7 @@ class BMP280 :
             lsb = self._device.readU8(BMP280_REGISTER_TEMPDATA_LSB)
             xlsb = self._device.readU8(BMP280_REGISTER_TEMPDATA_XLSB)
             raw = ((msb << 8 | lsb) << 8 | xlsb) >> 4
-            self._logger.debug('Raw temperature 0x{0:04X} ({1})'.format(raw & 0xFFFF, raw))
+            if (self.debug): print('Raw temperature 0x{0:04X} ({1})'.format(raw & 0xFFFF, raw))
             return raw
     #reading raw data from registers, and combining into one raw measurment
     def read_raw_pressure(self):
@@ -156,7 +133,7 @@ class BMP280 :
             lsb = self._device.readU8(BMP280_REGISTER_PRESSUREDATA_LSB)
             xlsb = self._device.readU8(BMP280_REGISTER_PRESSUREDATA_XLSB)
             raw = ((msb << 8 | lsb) << 8 | xlsb) >> 4
-            self._logger.debug('Raw pressure 0x{0:04X} ({1})'.format(raw & 0xFFFF, raw))
+            if (self.debug): print('Raw pressure 0x{0:04X} ({1})'.format(raw & 0xFFFF, raw))
             return raw
     #applying calibration data to the raw reading
     def readTemperature(self):
@@ -167,7 +144,7 @@ class BMP280 :
         TMP_FINE = TMP_PART1 + TMP_PART2
         self._tfine = TMP_FINE
         temp = ((TMP_FINE*5+128)>>8)/100.0
-        self._logger.debug('Calibrated temperature {0} C'.format(temp))
+        if (self.debug): print('Calibrated temperature {0} C'.format(temp))
         return temp
     #applying calibration data to the raw reading
     def readPressure(self):
@@ -199,7 +176,7 @@ class BMP280 :
         """Calculates the altitude in meters."""
         pressure = float(self.read_pressure())
         altitude = 44330.0 * (1.0 - pow(pressure / sealevel_pa, (1.0/5.255)))
-        self._logger.debug('Altitude {0} m'.format(altitude))
+        if (self.debug): print('Altitude {0} m'.format(altitude))
         return altitude
 
     def readSealevelPressure(self, altitude_m=0.0):
@@ -207,5 +184,5 @@ class BMP280 :
         meters. Returns a value in Pascals."""
         pressure = float(self.read_pressure())
         p0 = pressure / pow(1.0 - altitude_m/44330.0, 5.255)
-        self._logger.debug('Sealevel pressure {0} Pa'.format(p0))
+        if (self.debug): print('Sealevel pressure {0} Pa'.format(p0))
         return p0
