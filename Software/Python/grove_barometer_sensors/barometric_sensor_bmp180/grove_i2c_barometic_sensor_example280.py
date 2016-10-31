@@ -3,7 +3,7 @@
 import smbus
 
 #import grovepi
-from grove_i2c_barometic_sensor_BMP280 import BMP280
+from grove_i2c_barometric_sensor_BMP280 import BMP280
 
 # ===========================================================================
 # Example Code
