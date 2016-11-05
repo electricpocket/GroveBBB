@@ -3,12 +3,12 @@
 import smbus
 import Adafruit_BBIO.GPIO as GPIO
 #import grovepi
-from grove_i2c_barometic_sensor_BMP280 import BMP280
+from grove_i2c_barometric_sensor_BMP280 import BMP280
 from datetime import datetime
 import socket
 import json
 import time
-
+import sys #for args
 # ===========================================================================
 # Example Code
 # ===========================================================================
@@ -30,6 +30,7 @@ bmp = BMP280(0x77, 1)
 #else:
 #    bus = smbus.SMBus(0)
 bus = smbus.SMBus(2)
+portnumber = sys.argv[1]
 temp = bmp.readTemperature()
 
 # Read the current barometric pressure level
@@ -60,7 +61,7 @@ while True:
     #send out  messages with readings
     timestamp = "{:%H%M%S}".format(datetime.now())
     timestamp = datetime.now().strftime("%s")
-    jsonmsg = ('["barometric":{"timestamp":'+ timestamp+',"id":'+'7114'+',"temp":'+("%.1f" %temp)+',"pressure":'+ ("%.2f" %( pressure / 100.0))
+    jsonmsg = ('["barometric":{"timestamp":'+ timestamp+',"id":'+str(portnumber)+',"temp":'+("%.1f" %temp)+',"pressure":'+ ("%.2f" %( pressure / 100.0))
                    +',"altitude":'+("%.2f" %altitude)+'}]')
     #print jsonmsg 
     if(connected) :
