@@ -31,22 +31,23 @@ bmp = BMP280(0x77, 1)
 #    bus = smbus.SMBus(0)
 bus = smbus.SMBus(2)
 portnumber = sys.argv[1]
-temp = bmp.readTemperature()
 
-# Read the current barometric pressure level
-pressure = bmp.readPressure()
-
-# To calculate altitude based on an estimated mean sea level pressure
-# (1013.25 hPa) call the function as follows, but this won't be very accurate
-# altitude = bmp.readAltitude()
-
-# To specify a more accurate altitude, enter the correct mean sea level
-# pressure level.  For example, if the current pressure level is 1023.50 hPa
-# enter 102350 since we include two decimal places in the integer value
-altitude = bmp.readAltitude(101560)
 connected=False
 server_address = ('crowdais.com', 5114)
 while True:
+    temp = bmp.readTemperature()
+
+    # Read the current barometric pressure level
+    pressure = bmp.readPressure()
+
+    # To calculate altitude based on an estimated mean sea level pressure
+    # (1013.25 hPa) call the function as follows, but this won't be very accurate
+    # altitude = bmp.readAltitude()
+
+    # To specify a more accurate altitude, enter the correct mean sea level
+    # pressure level.  For example, if the current pressure level is 1023.50 hPa
+    # enter 102350 since we include two decimal places in the integer value
+    altitude = bmp.readAltitude(101560)
     print("Temperature: %.2f C" % temp)
     print("Pressure:    %.2f hPa" % (pressure / 100.0))
     print("Altitude:    %.2f m" % altitude)
